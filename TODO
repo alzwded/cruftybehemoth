@@ -1,0 +1,41 @@
+::CORE::
+* add audio interface
+* add OpenMP for AI loops (where aplicable) and rendering (where aplicable)
+* implement Background and Foreground
+* reimplement collision detection to account for velocity
+* Entity::location_ is not modifyable by the entity itself, but rather just by the Game after movements have been decided
+* implement Entity_Exit and add mechanism to change levels
+* decide on BlockBundle implementation to account for animations, location_, have it be abstract enough to allow the implementation of any DisplayAdapter
+* implement EntitySpawner and Resource_Entity to load entities
+* implement Resource_Level and dependencies to load levels
+* add support for a scripting language (think Lua, but I might implement my own, or generate interfaces for any scripting language) so that it will not be necessary to code in c++
+
+::RES::
+* low priority
+* resources will be stored in compressed files and the Resource adapters will need to read their data from a stream rather than from a file
+* add some rudimentary compression
+
+::GEOM::
+* reimplement collision detection to be more general (the current one is stupid)
+
+::DOC::
+* add documentation for interfaces in the source files
+* add docomentation for why things work as they do
+* write the README
+
+::DEMO::
+== GTK demo ==
+* add png renderer
+* add moving entities
+* add some pool-ball moving logic
+* add input interface (keyboard, mouse, gamepad)
+== Scripting demo ==
+* depends on scripting support in Core
+* TODO
+== Advanced demo ==
+* TODO
+* should use some real graphics engine like Irrlicht
+
+::MISC::
+* finish up TODO list
+* attach some issue-tracking system to the project to set long term goals and set up some planning
