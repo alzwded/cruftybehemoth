@@ -1,0 +1,16 @@
+==== CRUFTY BEHEMOTH ====
+
+== 1. Info ==
+Basic, abstract, generic 2D gaming framework.
+
+Provides resource management and main loop.
+
+== 2. Building ==
+Do a make to build the demo. Do a make framework-lib to generate libframework.so in ./lib.
+
+== 3. Future ==
+Implement OpenMP parallelization for AI loops and drawing an entity to a temp buffer to have the main thread compose everything in the end (it sounds less optimal than I actually have in mind.)
+
+== 4. TODO ==
+* documentation
+* dist make target which includes the necessary headers

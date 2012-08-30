@@ -1,0 +1,10 @@
+0.1-pre
+* first shared library build
+0.1.1-pre
+* first demo executable build
+0.1.2-pre
+* finished resource manager and added a demo resource handler that loads an image
+0.1.3-pre
+* effin ubuntu has --as-needed by default. I did not know about this flag until today. Now compiles and runs on ubuntu as well.
+* got rid of type cast warnings
+* added CHANGES, README to project

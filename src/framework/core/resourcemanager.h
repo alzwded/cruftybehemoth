@@ -1,0 +1,87 @@
+#ifndef CORE_RESOURCEMANAGER_H
+#define CORE_RESOURCEMANAGER_H
+
+#include <string>
+#include <map>
+#include <set>
+#include <vector>
+#include <utility>
+#include <assert.h>
+#include <cstddef>
+
+#define CORE_RESOURCEMANAGER_DEFAULTPATH "./"
+#define CORE_RESOURCEMANAGER_PATHSEPARATOR "/"
+
+namespace Core {
+
+class ResourceManager;
+
+//---------- Core::Resource
+class Resource {
+public:
+    //========== Resrouce::~Resource
+    virtual ~Resource() {}
+    //========== Resrouce::Clssid
+    virtual unsigned long Clssid() const =0;
+    //========== Resrouce::IsA
+    virtual bool IsA(unsigned long _clssid) const { return Clssid() == _clssid; };
+    //========== Resrouce::Load
+    virtual void Load() =0;
+    //========== Resrouce::Release
+    virtual void Release() =0;
+    //========== Resrouce::Get
+    virtual void* Get() =0;
+    //========== Resrouce::Loaded
+    virtual bool Loaded() =0;
+
+protected:
+    //========== Resrouce::SetPath
+    void SetPath(const std::string& _path) { path_ = _path; }
+    //========== Resrouce::GetPath
+    std::string GetPath() const { return path_; }
+
+private:
+    //========== Resrouce:: private fields
+    std::string path_;
+
+    //========== Resrouce:: friends
+    friend class Core::ResourceManager;
+};
+
+//---------- ResourceManager:: typedefs
+typedef Resource* (*Resource_cstr)(const std::string&);
+
+//---------- Core::ResourceManager
+class ResourceManager {
+public:
+    //========== ResourceManager::ResourceManager
+    ResourceManager() : path_(CORE_RESOURCEMANAGER_DEFAULTPATH) {}
+    //========== ResourceManager::SetPath
+    void SetPath(const std::string& _path) { path_ = _path; }
+    //========== ResourceManager::GetPath
+    std::string GetPath() const { return path_; }
+    //========== ResourceManager::Load
+    bool Load();
+    //========== ResourceManager::Unload
+    void Unload();
+    //========== ResourceManager::GetRegistry
+    static std::map<std::string, Resource_cstr>& GetRegistry();
+    //========== ResourceManager::Register
+    static void Register(const std::string&, Resource_cstr);
+    //========== ResourceManager::GetRID
+    unsigned long GetRID(const std::string& _path);
+    //========== ResourceManager::Get
+    void* Get(const unsigned long _resourceID);
+    //========== ResourceManager::Release
+    void Release(const unsigned long _resourceID);
+private:
+    //========== ResourceManager:: private members
+    std::set<unsigned long> keys_;
+    std::map<unsigned long, Resource*> resources_;
+    std::map<std::string, unsigned long> pathIDs_;
+    std::string path_;
+};
+
+} // namespace
+
+#endif

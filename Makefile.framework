@@ -1,0 +1,15 @@
+VERSION = \"`cat version`\"
+CC = g++
+CFLAGS = -I./src -I./src/framework -g -fPIC -c -DCORE_VERSION=$(VERSION)
+LDFLAGS = -L./lib -g -Wl,-rpath-link=../lib,-rpath=../lib,--no-as-needed
+
+#note on ubuntu -- gcc only likes the first -Wl, despite what is said in the article hereunder. Don't use more than one -Wl parameter with gcc 4.6.1
+
+#TODO figure out how to link libdemo.so with --as-needed because otherwise it refuses to link the static initializer
+#nevermind -- from gentoo.org/proj/en/qa/asneeded.xml
+#Initializers and Deconstructors
+#
+#There exists a class of applications at the moment that break when using --as-needed. These applications are not at fault, but rather the linker itself. The linker is unable to detect dependencies between the initializers and deconstructors (.init/.fini ELF sections) when working with C++ code. As such, it may discard libraries when none of the symbols are used from it, thus mistakenly changing the initialization and deconstruction code paths.
+#
+#While this class of applications is small and there are no known applications yet which fall into this category, this is something to keep in mind. The only way to really detect such a thing is by proper source code and runtime analysis.
+# woopty doo-dah, this falls into that category (although it SHOULD NOT fall into this category -- TODO figure out how to get the static initializers working with --as-needed
