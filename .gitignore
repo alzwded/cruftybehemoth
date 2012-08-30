@@ -38,11 +38,7 @@ ehthumbs.db
 Thumbs.db
 
 # build directories
-./bin
-./bin/*
-./obj
-./obj/*
-./lib
-./lib/*
-./dist
-./dist/*
+bin/*
+obj/*
+lib/*
+dist/*
