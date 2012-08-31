@@ -13,7 +13,6 @@ Implement OpenMP parallelization for AI loops and drawing an entity to a temp bu
 
 == 4. TODO ==
 * documentation
-* dist make target which includes the necessary headers
 
 == 5. Dependencies ==
 * the demo depends on gtk+-2.0
