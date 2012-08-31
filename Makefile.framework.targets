@@ -40,6 +40,14 @@ FRAMEWORKOBJ = obj/framework/core/entity.o \
 	obj/framework/core/resource-entity.o \
 	obj/framework/debug/d123.o
 
+framework-dist: framework-lib
+	mkdir -p dist/inc/core dist/inc/geom dist/inc/debug dist/lib
+	cp lib/libcruftybehemoth.so dist/lib/
+	cp src/framework/core/*.h dist/inc/core/
+	cp src/framework/geom/*.h dist/inc/geom/
+	cp src/framework/debug/*.h dist/inc/debug/
+	tar cvjf dist/cruftybehemoth-`cat version`.tbz -Cdist/ --exclude=*.tbz .
+
 framework-lib: framework
 	mkdir -p lib
 	$(CC) -shared $(LDFLAGS) -o lib/libcruftybehemoth.so $(FRAMEWORKOBJ)
