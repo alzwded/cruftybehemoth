@@ -3,8 +3,7 @@
 * add OpenMP for AI loops (where aplicable) and rendering (where aplicable)
 * implement Background and Foreground
 * reimplement collision detection to account for velocity
-* Entity::location_ is not modifyable by the entity itself, but rather just by the Game after movements have been decided
-* implement Entity_Exit and add mechanism to change levels
+* implement Entity_Exit and add mechanism to change levels -- level change will be done by the PC entity that collides with it
 * decide on BlockBundle implementation to account for animations, location_, have it be abstract enough to allow the implementation of any DisplayAdapter
 * implement EntitySpawner and Resource_Entity to load entities
 * implement Resource_Level and dependencies to load levels
@@ -13,7 +12,7 @@
 ::RES::
 * low priority
 * resources will be stored in compressed files and the Resource adapters will need to read their data from a stream rather than from a file
-* add some rudimentary compression
+* add some rudimentary encryption
 
 ::GEOM::
 * reimplement collision detection to be more general (the current one is stupid)
