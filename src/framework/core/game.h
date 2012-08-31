@@ -31,19 +31,21 @@ protected:
 
 public:
     //========== Game::Game
-    Game()
-        : display_(NULL /* TODO default engine in demo */)
-        , input_(NULL /* TODO depends on previous */)
+    Game(
+            DisplayAdapter* _display =NULL,
+            InputAdapter* _input =NULL)
+        : display_(_display)
+        , input_(_input)
         , frameSpeed_(17)
         {}
     //========== Game::~Game
     virtual ~Game() {}
-    //========== Game::MainLoop
-    void MainLoop();
     //========== Game::Main
     int Main(int argc, char* argv[]);
 
 private:
+    //========== Game::MainLoop
+    void MainLoop();
     //========== Game::GetHelp
     std::string GetHelp();
     //========== Game::Sleep

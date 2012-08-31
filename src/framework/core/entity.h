@@ -3,11 +3,12 @@
 
 #include <list>
 #include <set>
+#include <cstddef>
 #include <geom/region.h>
 #include <geom/point.h>
 #include <core/blockbundle.h>
 #include <core/util.h>
-#include <cstddef>
+#include <debug/d123.h>
 
 namespace Core {
 
@@ -15,11 +16,15 @@ namespace Core {
 class Environment;
 class DisplayAdapter;
 class EntitySpawner;
+class Game; // TODO maybe it should not be the one to call OnCollision
 
 //---------- Geom::Entity
 class Entity {
 public:
-    Entity() : id_(Core::ID::Next()) {}
+    Entity(const Geom::Point& _location = Geom::Point())
+        : id_(Core::ID::Next())
+        , location_(_location)
+        {}
     //========== Entity::~Entity
     virtual ~Entity() {}
     //========== Entity::Loop
@@ -54,16 +59,17 @@ public:
 
 protected:
     //========== Entity::OnColision
-    virtual void OnCollision(Entity&) =0;
+    // stuff like reduce hit points or set a flag to run away next frame
+    // etc
+    virtual void OnCollision(const Entity&, const Geom::Point&) =0;
 
 public:
     //========== Entity::Colides
-    // only triggers _other.OnColision()
-    void Collide(Entity& _other)
+    bool Collides(const Entity& _other)
     {
-        if(HitBox().Intersects(_other.HitBox())) {
-            _other.OnCollision(*this);
-        }
+        D123_LOG(D123::FATAL, "TODO implement this to account for velocity");
+        // TODO this will be moved in the main loop
+        return HitBox().Intersects(_other.HitBox());
     }
 
     //========== Entity::GetLocation
@@ -95,11 +101,6 @@ public:
     virtual Entity* ClonePtr() const =0;
 
 protected:
-    //========== Entity::_GetLocation
-    Geom::Point& _GetLocation()
-    {
-        return location_;
-    }
     //========== Entity::_GetVelocity
     Geom::Point& _GetVelocity()
     {
@@ -122,6 +123,13 @@ protected:
     }
 
 private:
+    //========== Entity::_GetLocation
+    // private for inheriting classes
+    // this will only be modified by the main loop
+    Geom::Point& _GetLocation()
+    {
+        return location_;
+    }
     //========== Entity:: private fields
     Geom::Point location_;
     Geom::Point velocity_;
@@ -131,9 +139,10 @@ private:
     unsigned long id_;
 
     //========== Entity:: friends
-    friend class EntitySpawner;
+    friend class Core::EntitySpawner;
     friend class Core::Environment;
-    //friend class DisplayAdapter;
+    friend class Core::DisplayAdapter;
+    friend class Core::Game;
 };
 
 //__________ typedefs

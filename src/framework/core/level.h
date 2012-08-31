@@ -20,7 +20,7 @@ public:
     virtual const Geom::Region& HitBox() const { return hb_; }
     virtual bool IsHitBoxDamaging() const { return false; }
     virtual unsigned long Clssid() const { return 0xDEADB33F; }
-    virtual void OnCollision(Core::Entity&) {}
+    virtual void OnCollision(const Core::Entity&, const Geom::Point&) {}
     virtual Entity* ClonePtr() const { return new __entity(*this); }
 private:
     Geom::Rectangle hb_;

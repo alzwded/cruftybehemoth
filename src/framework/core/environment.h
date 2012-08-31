@@ -32,8 +32,8 @@ public:
     //========== Environment::GetScreensFor
     // Entity should most of the time be Entity_PC
     ScreenList GetScreensFor(const Entity&);
-    //========== Environment::UpdateLocation
-    void UpdateLocation(Entity&, const Geom::Point&);
+    //========== Environment::GetScreenEntityIsOn
+    const Screen* GetScreenEntityIsOn(const Entity&);
     //========== Environment::GetLevel()
     Level* GetLevel() { return lvl_; }
     //========== Environment::SetUseCache
@@ -41,6 +41,8 @@ public:
     //========== Environment::ClearCache
     void ClearCache();
 private:
+    //========== Environment::UpdateLocation
+    void Move(Entity&);
     //========== Environment::GetScreensFor(Point)
     ScreenList GetScreensFor(const Geom::Point&);
 

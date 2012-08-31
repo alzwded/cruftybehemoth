@@ -88,49 +88,22 @@ Core::ScreenList Core::Environment::GetScreensFor(const Core::Entity& _entity)
     return GetScreensFor(_entity.GetLocation());
 }
 
-//========== Environment::UpdateLocation
-inline void Core::Environment::UpdateLocation(
-        Core::Entity& _entity,
-        const Geom::Point& _oldLocation)
+//========== Environment::Move
+void Core::Environment::Move(Core::Entity& _entity)
 {
-    Screen* s1 = screens_.FindFor(_oldLocation);
-    Screen* s2 = screens_.FindFor(_entity.GetLocation());
+    Geom::Point newLocation(
+            _entity.GetLocation().X() + _entity.GetVelocity().X(),
+            _entity.GetLocation().Y() + _entity.GetVelocity().Y());
+    Screen* oldScreen = screens_.FindFor(_entity.GetLocation());
+    Screen* newScreen = screens_.FindFor(newLocation);
 
-    if(s2->HitWall(_entity)) {
-        if(s1->HitWall(_oldLocation)) {
-            _entity.location_ = _oldLocation;
-        }
-        // TODO implement glitch nicely
-        Geom::Point orig(_entity.location_);
-        for(float i = 1.; i <= 3. * std::max(_entity.velocity_.X(), _entity.velocity_.Y()); i += 1.) {
-            _entity.location_ = orig;
-            _entity.location_._X() -= i;
-            if(!s2->HitWall(_entity)) break;
-            _entity.location_._X() += 2 * i;
-            if(!s2->HitWall(_entity)) break;
-            _entity.location_ = orig;
-            _entity.location_._Y() -= i;
-            if(!s2->HitWall(_entity)) break;
-            _entity.location_._Y() += 2 * i;
-            if(!s2->HitWall(_entity)) break;
-            _entity.location_._X() += i;
-            if(!s2->HitWall(_entity)) break;
-            _entity.location_._X() -= 2 * i;
-            if(!s2->HitWall(_entity)) break;
-            _entity.location_._Y() -= 2 * i;
-            if(!s2->HitWall(_entity)) break;
-            _entity.location_._X() += 2 * i;
-            if(!s2->HitWall(_entity)) break;
-            D123_LOG(D123::ERROR, "entity %ld with clssid %ld got stuck in a waill\n", _entity.ID(), _entity.Clssid());
-            break;
-        }
-    }
-
-    if(s1 != (s2 = screens_.FindFor(_entity.GetLocation())))
+    if(oldScreen != newScreen)
     {
-        if(s1 != NULL) s1->RemoveEntity(_entity);
-        if(s2 != NULL) s2->AddEntity(_entity);
+        if(oldScreen != NULL) oldScreen->RemoveEntity(_entity);
+        if(newScreen != NULL) newScreen->AddEntity(_entity);
     }
+
+    _entity._GetLocation() = newLocation;
 
     return;
 }
@@ -140,4 +113,10 @@ void Core::Environment::ClearCache()
 {
     C_entities_.clear();
     C_screens_.clear();
+}
+
+//========== Environment::GetScreenEntityIsOn
+const Core::Screen* Core::Environment::GetScreenEntityIsOn(const Core::Entity& _entity)
+{
+    return screens_.FindFor(_entity.GetLocation());
 }

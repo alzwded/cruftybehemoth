@@ -19,12 +19,11 @@ class Entity_Exit
 public:
     //========== Entity_Exit::Entity_Exit
     Entity_Exit(const Geom::Point& _location, Environment& _environment, const Environment _nextEnvironment)
-        : environment_(_environment)
+        : Entity(_location)
+        , environment_(_environment)
         , hb_(NULL)
         , nextEnvironment_(_nextEnvironment)
     {
-        _GetLocation() = _location;
-
         _GetBlockBundle().AddBlock(Block(-1, 0, 0));
         _GetBlockBundle().AddBlock(Block(-1, 0, -1));
         _GetBlockBundle().AddBlock(Block(-1, 0, -2));
@@ -38,8 +37,10 @@ public:
     //========== Entity_Exit::ClonePtr
     virtual Entity* ClonePtr() const { return new Entity_Exit(*this); }
     //========== Entity_Exit::OnColision
-    virtual void OnCollision(Entity& _entity)
+    virtual void OnCollision(const Entity& _entity, const Geom::Point& _collisionPoint)
     {
+        // TODO actually, have the PC entity load the next environment on
+        // collision
         // TODO figure out how to tell the game to display the next environment
         environment_.GetLevel()->GetEnvironment() = nextEnvironment_;
     }
