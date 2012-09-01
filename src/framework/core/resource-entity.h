@@ -15,9 +15,15 @@ namespace Core {
 class Resource_Entity 
     : public virtual Core::Resource
 {
-public:
+protected:
     //========== Resrouce_Entity::Resrouce_Entity
-    Resource_Entity() : es_(NULL) {}
+    Resource_Entity(
+            const std::string& _path,
+            Core::ResourceManager* _rm)
+        : Resource(_path, _rm)
+        , es_(NULL)
+        {}
+public:
     //========== Resrouce_Entity::CLSSID
     static const unsigned long CLSSID = 1;
     //========== Resrouce_Entity::Clssid
@@ -38,11 +44,6 @@ public:
     // TODO move to abstract class
     // no, it should not return Spawn, it should return the EntitySpawner
     virtual void* Get()
-    {
-        return es_;
-    }
-    //========== Resource_Entity::GetEntitySpawner
-    EntitySpawner* GetEntitySpawner()
     {
         return es_;
     }

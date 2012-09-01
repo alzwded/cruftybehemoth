@@ -99,8 +99,15 @@ void Core::Environment::Move(Core::Entity& _entity)
 
     if(oldScreen != newScreen)
     {
-        if(oldScreen != NULL) oldScreen->RemoveEntity(_entity);
-        if(newScreen != NULL) newScreen->AddEntity(_entity);
+        Core::Entity* removed = NULL;
+        if(oldScreen != NULL) removed = oldScreen->RemoveEntity(&_entity);
+        if(newScreen != NULL) newScreen->AddEntity(&_entity);
+        else if(removed) {
+            delete removed; // UMMMM??? sigsegv much?
+            return; // and pray it won't segfault
+            // TODO add a "FloatingEntities" list somewhere to delete them
+            // when unloading the level or something
+        }
     }
 
     _entity._GetLocation() = newLocation;
@@ -119,4 +126,16 @@ void Core::Environment::ClearCache()
 const Core::Screen* Core::Environment::GetScreenEntityIsOn(const Core::Entity& _entity)
 {
     return screens_.FindFor(_entity.GetLocation());
+}
+
+//========== Environment::AddEntity
+void Core::Environment::AddEntity(Entity* _e)
+{
+    if(!_e) return;
+    Core::Screen* screen = screens_.FindFor(_e->GetLocation());
+    if(screen) {
+        screen->AddEntity(_e); 
+    } else {
+        D123_LOG(D123::ERROR, "screen does not exist for location (%f,%f), are you sure you're not loading the entity before the screen?", _e->GetLocation().X(), _e->GetLocation().Y());
+    }
 }

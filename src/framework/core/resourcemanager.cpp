@@ -40,7 +40,7 @@ bool Core::ResourceManager::Load()
 
             D123_LOGLINE(D123::INFO, "RID = %ld", newID);
 
-            Resource* res = i->second(path);
+            Resource* res = i->second(path, this);
             assert(res);
 
 
@@ -121,12 +121,16 @@ unsigned long Core::ResourceManager::GetRID(const std::string& _path)
 }
 
 //========== ResourceManager::Get
-void* Core::ResourceManager::Get(const unsigned long _resourceID)
+void* Core::ResourceManager::Get(const unsigned long _resourceID, const unsigned long _clssid)
 {
     D123_LOG(D123::TRACE, "resource %ld requested", _resourceID);
     std::map<unsigned long, Resource*>::iterator i;
     if((i = resources_.find(_resourceID)) != resources_.end()) {
         assert(i->second);
+        if(_clssid && !i->second->IsA(_clssid)) {
+            D123_LOG(D123::ERROR, "requested a %ld resource, but resource %ld IsA %ld (not including base types)", _clssid, _resourceID, i->second->Clssid());
+            return NULL;
+        }
         if(!i->second->Loaded()) {
             D123_LOG(D123::TRACE, "loading resource %ld", _resourceID);
             i->second->Load();

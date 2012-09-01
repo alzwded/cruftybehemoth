@@ -18,6 +18,12 @@ class ResourceManager;
 
 //---------- Core::Resource
 class Resource {
+protected:
+    //========== Resrouce::Resource
+    Resource(const std::string& _path, ResourceManager* _rm)
+        : path_(_path)
+        , rm_(_rm)
+        {}
 public:
     //========== Resrouce::~Resource
     virtual ~Resource() {}
@@ -39,17 +45,22 @@ protected:
     void SetPath(const std::string& _path) { path_ = _path; }
     //========== Resrouce::GetPath
     std::string GetPath() const { return path_; }
+    //========== Resrouce::SetResourceManager
+    void SetResourceManager(Core::ResourceManager* _rm) { rm_ = _rm; }
+    //========== Resrouce::GetResourceManager
+    Core::ResourceManager* GetResourceManager() const { return rm_; }
 
 private:
     //========== Resrouce:: private fields
     std::string path_;
+    ResourceManager* rm_;
 
     //========== Resrouce:: friends
     friend class Core::ResourceManager;
 };
 
 //---------- ResourceManager:: typedefs
-typedef Resource* (*Resource_cstr)(const std::string&);
+typedef Resource* (*Resource_cstr)(const std::string&, Core::ResourceManager*);
 
 //---------- Core::ResourceManager
 class ResourceManager {
@@ -71,7 +82,7 @@ public:
     //========== ResourceManager::GetRID
     unsigned long GetRID(const std::string& _path);
     //========== ResourceManager::Get
-    void* Get(const unsigned long _resourceID);
+    void* Get(const unsigned long _resourceID, const unsigned long _type =0);
     //========== ResourceManager::Release
     void Release(const unsigned long _resourceID);
 private:

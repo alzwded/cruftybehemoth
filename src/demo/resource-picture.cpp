@@ -24,9 +24,11 @@ void Demo::Resource_Picture::Release()
 }
 
 //========== Resource_Picture::New
-Core::Resource* Demo::Resource_Picture::New(const std::string& _path)
+Core::Resource* Demo::Resource_Picture::New(
+        const std::string& _path,
+        Core::ResourceManager* _rm)
 {
-    Core::Resource* a = new Demo::Resource_Picture(_path);
+    Core::Resource* a = new Demo::Resource_Picture(_path, _rm);
     return a;
 }
 

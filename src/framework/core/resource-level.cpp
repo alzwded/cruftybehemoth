@@ -1,4 +1,5 @@
 #include <core/resource-level.h>
+#include <core/resource-entity.h>
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -7,9 +8,11 @@
 Core::Resource_Level::Initializer Core::Resource_Level::__init__;
 
 //========== Resource_Level::New
-Core::Resource* Core::Resource_Level::New(const std::string& _path)
+Core::Resource* Core::Resource_Level::New(
+        const std::string& _path,
+        Core::ResourceManager* _rm)
 {
-    return new Resource_Level(_path);
+    return new Resource_Level(_path, _rm);
 }
 
 //========== Resource_Level::Load
@@ -30,18 +33,33 @@ void Core::Resource_Level::Load()
         if(strncmp(type, "screen", 6) == 0) {
             D123_LOG(D123::TRACE, "loading screen");
             int x, y;
-            char* bg;
-            char* fg;
-            assert(4 == fscanf(f, "%d:%d:%a[^:]:%a[^\n]", &x, &y, &bg, &fg));
+            char* bgPath;
+            char* fgPath;
+            assert(4 == fscanf(f, "%d:%d:%a[^:]:%a[^\n]", &x, &y, &bgPath, &fgPath));
             // new screen
-            free(bg);
-            free(fg);
+            Screen s;
+            s._Background() = GetResourceManager()->GetRID(bgPath);
+            s._Foreground() = GetResourceManager()->GetRID(fgPath);
+            lvl_->GetEnvironment().screens_.Set(x, y, s);
+
+            free(bgPath);
+            free(fgPath);
         } else if(strncmp(type, "entity", 6) == 0) {
             D123_LOG(D123::TRACE, "loading entity");
             float x, y;
             char* path;
             assert(3 == fscanf(f, "%f:%f:%a[^\n]", &x, &y, &path));
-            // screens->AddEntity(registry_[path]->Get()->Spawn(x, y));
+            unsigned long rid = GetResourceManager()->GetRID(path);
+            EntitySpawner* es =
+                    static_cast<EntitySpawner*>(GetResourceManager()
+                    ->Get(rid, Resource_Entity::CLSSID));
+            if(es) {
+                Core::Entity* entity = es->Spawn(x, y);
+                lvl_->GetEnvironment().AddEntity(entity);
+            } else {
+                D123_LOG(D123::ERROR, "NULL entity spawner");
+            }
+
             free(path);
         } else if(strncmp(type, "exit", 4) == 0) {
             D123_LOG(D123::TRACE, "loading exit");
@@ -49,6 +67,8 @@ void Core::Resource_Level::Load()
             char* nextLevel;
             assert(3 == fscanf(f, "%f:%f:%a[^\n]", &x, &y, &nextLevel));
             // :-/
+            // TODO after Entity_Exit is done
+            // maybe consider Entity_Trigger as a superclass?
             free(nextLevel);
         }
         free(type);

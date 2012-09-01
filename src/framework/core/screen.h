@@ -9,7 +9,6 @@
 #include <geom/region.h>
 #include <core/entity.h>
 #include <core/util.h>
-#include <core/background.h>
 
 #define CORE_SCREEN_WIDTH (320.0f)
 #define CORE_SCREEN_HEIGHT (200.0f)
@@ -21,6 +20,7 @@ class Game;
 class Level;
 class Environment;
 class ScreenBucketTree;
+class Resource_Level;
 
 //---------- Core::Screen
 class Screen {
@@ -49,12 +49,14 @@ public:
     //========== Screen::HitWall(Entity)
     bool HitWall(const Entity& _e) const
     {
-        return bg_.Intersects(_e.GetLocation());
+        //return bg_.Intersects(_e.GetLocation());
+        // TODO walls for a screen
     }
     //========== Screen::HitWall(Point)
     bool HitWall(const Geom::Point& _p) const
     {
-        return bg_.Intersects(_p);
+        //return bg_.Intersects(_p);
+        // TODO walls for a screen
     }
     //========== Screen::GetScreenQuadrant
     Quadrant GetScreenQuadrant(const Geom::Point& _p) const
@@ -78,7 +80,9 @@ public:
     //========== Screen::GetEntities
     const std::set<Entity*, DerefLess<Entity> >& GetEntities() const { return entities_; }
     //========== Screen::Background
-    const Background& GetBackground() const { return bg_; }
+    const unsigned long Background() const { return bg_; }
+    //========== Screen::Foreground
+    const unsigned long Foreground() const { return fg_; }
 
     //========== Screen::Extent
     const Geom::Region& Extent() const {
@@ -100,12 +104,18 @@ private:
     void SetBelow(Screen* _s) { below_ = _s; }
 
     //========== Screen::AddEntity
-    void AddEntity(const Entity& _entity) { entities_.insert(_entity.ClonePtr()); }
+    void AddEntity(Entity* _entity) { entities_.insert(_entity); }
     //========== Screen::RemoveEntity
-    void RemoveEntity(const Entity& _entity) { entities_.erase(const_cast<Entity*>(&_entity)); }
+    Entity* RemoveEntity(Entity* _entity)
+    {
+        if(!_entity) return _entity;
+        entities_.erase(_entity);
+    }
 
     //========== Screen::_Background
-    Background& _Background() { return bg_; }
+    unsigned long& _Background() { return bg_; }
+    //========== Screen::_Foreground
+    unsigned long& _Foreground() { return fg_; }
     //========== Screen::SetOriginBlock
     void SetOriginBlock(const std::pair<int, int>& _p)
     {
@@ -122,14 +132,15 @@ private:
     Screen* above_;
     Screen* below_;
     std::set<Entity*, DerefLess<Entity> > entities_;
-    Background bg_;
+    unsigned long bg_, fg_;
     std::pair<int, int> origin_;
     Geom::Rectangle extent_;
 
     //========== Screen:: friends
     friend class Core::ScreenBucketTree;
     friend class Core::Environment;
-    friend class Game;
+    friend class Core::Game;
+    friend class Core::Resource_Level;
     friend class Core::Level;
 };
 

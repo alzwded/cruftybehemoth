@@ -13,12 +13,15 @@ namespace Demo {
 class Resource_Picture
     : public virtual Core::Resource
 {
-public:
+protected:
     //========== Resource_Picture::Resource_Picture
-    Resource_Picture(const std::string& _path ="") : data_(NULL)
-    {
-        SetPath(_path);
-    }
+    Resource_Picture(
+            const std::string& _path,
+            Core::ResourceManager* _rm)
+        : Resource(_path, _rm)
+        , data_(NULL)
+    {}
+public:
     //========== Resource_Picture::CLSSID
     static const unsigned long CLSSID = 0x80000001;
     //========== Resource_Picture::Clssid
@@ -35,7 +38,7 @@ public:
         return data_;
     }
     //========== Resource_Picture::New
-    static Resource* New(const std::string& _path ="");
+    static Resource* New(const std::string& _path, Core::ResourceManager* _rm);
 
 private:
     //========== Resource_Picture:: private fields

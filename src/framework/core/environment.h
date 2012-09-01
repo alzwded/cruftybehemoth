@@ -15,6 +15,7 @@ class Level;
 class Screen;
 class Entity;
 class Entity_Exit;
+class Resource_Level;
 
 //---------- Core::Environment
 class Environment {
@@ -34,6 +35,8 @@ public:
     ScreenList GetScreensFor(const Entity&);
     //========== Environment::GetScreenEntityIsOn
     const Screen* GetScreenEntityIsOn(const Entity&);
+    //========== Environment::AddEntity
+    void AddEntity(Entity*);
     //========== Environment::GetLevel()
     Level* GetLevel() { return lvl_; }
     //========== Environment::SetUseCache
@@ -65,6 +68,7 @@ private:
     //========== Environment:: friends
     friend class Core::Game;
     friend class Core::Level;
+    friend class Core::Resource_Level;
 };
 
 } // namespace

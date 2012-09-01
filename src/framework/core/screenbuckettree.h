@@ -12,7 +12,7 @@ namespace Core {
 class ScreenBucketTree {
 public:
     //========== BucketScreenTree::Set
-    void Set(const int _x, const int _y, const Screen& _screen)
+    void Set(const int _x, const int _y, const Screen _screen)
     {
         std::map<int, std::map<int, Screen> >::iterator ix;
         std::map<int, Screen>::iterator iy;
