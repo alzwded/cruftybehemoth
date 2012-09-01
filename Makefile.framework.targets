@@ -14,10 +14,11 @@ FRAMEWORKSRC = src/framework/core/entity.cpp \
 	src/framework/core/displayadapter.cpp \
 	src/framework/core/level.cpp \
 	src/framework/core/resourcemanager.cpp \
+	src/framework/core/resource-entity.cpp \
 	src/framework/core/entityspawner.cpp \
 	src/framework/core/inputadapter.cpp \
 	src/framework/core/game.cpp \
-	src/framework/core/resource-entity.cpp \
+	src/framework/core/resource-level.cpp \
 	src/framework/debug/d123.cpp
 
 FRAMEWORKOBJ = obj/framework/core/entity.o \
@@ -34,10 +35,11 @@ FRAMEWORKOBJ = obj/framework/core/entity.o \
 	obj/framework/core/displayadapter.o \
 	obj/framework/core/level.o \
 	obj/framework/core/resourcemanager.o \
+	obj/framework/core/resource-entity.o \
 	obj/framework/core/entityspawner.o \
 	obj/framework/core/inputadapter.o \
 	obj/framework/core/game.o \
-	obj/framework/core/resource-entity.o \
+	obj/framework/core/resource-level.o \
 	obj/framework/debug/d123.o
 
 framework-dist: framework-lib
@@ -70,11 +72,12 @@ framework: $(FRAMEWORKSRC)
 	$(CC) $(CFLAGS) -o obj/framework/core/displayadapter.o src/framework/core/displayadapter.cpp
 	$(CC) $(CFLAGS) -o obj/framework/core/level.o src/framework/core/level.cpp
 	$(CC) $(CFLAGS) -o obj/framework/core/resourcemanager.o src/framework/core/resourcemanager.cpp
+	$(CC) $(CFLAGS) -o obj/framework/core/resource-entity.o src/framework/core/resource-entity.cpp
 	$(CC) $(CFLAGS) -o obj/framework/core/entityspawner.o src/framework/core/entityspawner.cpp
 	$(CC) $(CFLAGS) -o obj/framework/core/inputadapter.o src/framework/core/inputadapter.cpp
 	$(CC) $(CFLAGS) -o obj/framework/core/game.o src/framework/core/game.cpp
-	$(CC) $(CFLAGS) -o obj/framework/core/resource-entity.o src/framework/core/resource-entity.cpp
+	$(CC) $(CFLAGS) -o obj/framework/core/resource-level.o src/framework/core/resource-level.cpp
 	$(CC) $(CFLAGS) -o obj/framework/debug/d123.o src/framework/debug/d123.cpp
 
 clean:
-	rm -rf bin obj lib
+	rm -rf bin obj lib dist

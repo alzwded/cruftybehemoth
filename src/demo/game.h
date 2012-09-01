@@ -17,7 +17,7 @@ protected:
     virtual void _MainInit(int argc, char* argv[])
     {
         void* res =
-            _ResourceManager().Get(_ResourceManager().GetRID("test.png"));
+            _ResourceManager().Get(_ResourceManager().GetRID("data/test.png"));
         D123_LOG(D123::DEBUG, "res@%p", res);
     }
 };

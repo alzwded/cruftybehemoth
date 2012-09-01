@@ -1,1 +1,5 @@
-png:test.png
+png:data/test.png
+background:data/levels/demo-level-1/background-1
+foreground:data/levels/demo-level-1/foreground-1
+level:data/levels/demo-level-1/demo-level-1
+demo-entity:data/entity1

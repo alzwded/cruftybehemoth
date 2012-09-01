@@ -6,6 +6,10 @@ demo-lib: src/demo/resource-picture.cpp
 	$(CC) $(CFLAGS) `pkg-config --cflags gdk-pixbuf-2.0 gtk+-2.0` -o obj/demo/game.o src/demo/game.cpp
 	$(CC) -shared $(LDFLAGS) -o lib/libdemo.so obj/demo/resource-picture.o obj/demo/game.o `pkg-config --libs gdk-pixbuf-2.0 gtk+-2.0` -lcruftybehemoth
 
-demo-res: src/demo/resources src/demo/test.png 
+demo-res: src/demo/resources src/demo/data
 	mkdir -p bin
-	cp src/demo/resources src/demo/test.png bin/
+	tar cv -C src/demo/ resources data/ | tar xv -C bin/
+
+src/demo/data: src/demo/data/test.png src/demo/data/entity-1 src/demo/data/levels
+src/demo/data/levels: src/demo/data/levels/demo-level-1
+src/demo/data/levels/demo-level-1: src/demo/data/levels/demo-level-1/demo-level-1 src/demo/data/levels/demo-level-1/background-1 src/demo/data/levels/demo-level-1/foreground-1

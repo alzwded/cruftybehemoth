@@ -37,8 +37,13 @@ Icon?
 ehthumbs.db
 Thumbs.db
 
-# build directories
+# build directories #
+#####################
 bin/*
 obj/*
 lib/*
 dist/*
+
+# swaps #
+#########
+*.swp
