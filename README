@@ -27,3 +27,8 @@ Do a make to build the demo. Do a make framework-lib to generate libframework.so
 
 == 5. Dependencies ==
 * the demo depends on gtk+-2.0
+
+== 6. Documentation ==
+* doc/resources-format              contains information about the format
+                                    of various res files
+

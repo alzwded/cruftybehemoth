@@ -1,0 +1,56 @@
+== 'resources' Format ==
+
+resources ::= line 
+            | resources line
+            ;
+            
+line      ::= TAG ':' PATH '\n'
+            ;
+
+TAG       ::= [^:\n]*
+PATH      ::= [^:\n]*
+
+TAG needs to be registered before loading the resources
+registered by core:
+* background
+* foreground
+* entity
+* level
+
+These can, in theory, be redefined, but for now the behaviour when using
+a tag-name that's in use by the framework is undefined.
+
+== 'level' format ==
+
+level     ::= line
+            | level line
+            ;
+
+line      ::= 'screen' ':' INT[X] ':' INT[Y] 
+              ':' PATH[background] ':' PATH[foreground] '\n'
+            | 'entity' ':' FLOAT[X] ':' FLOAT[Y] ':' PATH '\n'
+            | 'exit' ':' FLOAT[X] ':' FLOAT[Y] ':' PATH '\n'
+            ;
+
+INT ::= [0-9]*
+      ;
+FLOAT ::= INT
+        | INT '.' INT
+        ;
+PATH ::= PATH_UNIX | PATH_WINDOWS ;
+PATH_UNIX ::= [^:\n]*
+            ;
+PATH_WINDOWS ::= [^:^/(){}"] ; // I don't exactly remember which characters
+                               // are allowed, but you get the picture
+
+TODO for path, use %; instead of : and %% instead of % (NOT IMPLEMENTED)
+TODO (later) UNIX: : and \n can be escaped with a \, use \\ to mean backslash
+          WINDOWS: those characters are not allowed, no problem
+
+== 'entity' format ==
+
+TODO to be defined
+PRE: contains initial velocity (2 floats), graphics blocks ended with ==
+Entities should each be read by their own reader, but the reader needs to
+extend the Resource_Entity class
+
