@@ -50,10 +50,12 @@ private:
     std::string GetHelp();
     //========== Game::Sleep
     void Sleep();
+    //========== Game::LevelLoader
+    LevelLoader& _LevelLoader() { return _ResourceManager()._LevelLoader(); }
 
     //========== Game:: private fields
     ResourceManager resources_;
-    LevelLoader levels_;
+    //LevelLoader levels_;
     DisplayAdapter* display_;
     InputAdapter* input_;
     clock_t frameBegin_;

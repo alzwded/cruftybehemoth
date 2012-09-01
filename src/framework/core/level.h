@@ -45,7 +45,7 @@ public:
     //========== Level::AllowEntityToLoop
     bool AllowEntityToLoop(Entity*) { return true; }
     //========== Level::GetMainEntity
-    Entity& GetMainEntity() { static Entity* e = new __entity(); return *e; }
+    Entity* GetMainEntity() { static Entity* e = new __entity(); return e; }
     //========== Level::End
     bool End() { return true; }
 private:
@@ -54,15 +54,6 @@ private:
 
     //========== Level:: friends
     friend class Core::LevelLoader;
-};
-
-//---------- Core::LevelLoader
-class LevelLoader {
-public:
-    //========== LevelLoader::GetLevel
-    Level& GetLevel(const int) { static Level* l = Level::New(); return *l; }
-    //========== LevelLoader::GetMainEntity
-    Entity& GetMainEntity() { static Entity* p; return *p; }
 };
 
 } // namespace

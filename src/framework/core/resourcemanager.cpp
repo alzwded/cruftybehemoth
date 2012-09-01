@@ -156,3 +156,19 @@ void Core::ResourceManager::Release(const unsigned long _resourceID)
         D123_LOG(D123::ERROR, "no resource with RID %ld", _resourceID);
     }
 }
+
+//========== LevelLoader::DropLevel
+void Core::LevelLoader::DropLevel(const int _i)
+{
+    _ResourceManager()->Release(levels_[_i]);
+}
+
+//========== LevelLoader::GetLevel
+Core::Level* Core::LevelLoader::GetLevel(const int _i)
+{
+    if(_i < 0 || _i >= levels_.size()) {
+        D123_LOG(D123::ERROR, "Index %d out of range!", _i);
+        throw "out of range";
+    }
+    return static_cast<Level*>(_ResourceManager()->Get(levels_[_i]));
+}

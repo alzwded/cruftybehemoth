@@ -14,7 +14,36 @@
 
 namespace Core {
 
+//__________ uses
+class Level;
+class Entity;
+
 class ResourceManager;
+
+//---------- Core::LevelLoader
+class LevelLoader {
+public:
+    //========== LevelLoader::LevelLoader
+    LevelLoader(ResourceManager* _rm)
+        : rm_(_rm)
+        {}
+    //========== LevelLoader::DropLevel
+    void DropLevel(const int _i);
+    //========== LevelLoader::GetLevel
+    Level* GetLevel(const int _i);
+    //========== LevelLoader::PushLevel
+    void PushLevel(const unsigned long _RID)
+    {
+        levels_.push_back(_RID);
+    }
+    ////========== LevelLoader::GetMainEntity
+    //Entity* GetMainEntity() { static Entity* p; return p; }
+    //========== LevelLoader::ResourceManager
+    ResourceManager* _ResourceManager() { return rm_; }
+private:
+    std::vector<unsigned long> levels_;
+    ResourceManager* rm_;
+};
 
 //---------- Core::Resource
 class Resource {
@@ -66,7 +95,10 @@ typedef Resource* (*Resource_cstr)(const std::string&, Core::ResourceManager*);
 class ResourceManager {
 public:
     //========== ResourceManager::ResourceManager
-    ResourceManager() : path_(CORE_RESOURCEMANAGER_DEFAULTPATH) {}
+    ResourceManager()
+        : path_(CORE_RESOURCEMANAGER_DEFAULTPATH)
+        , levels_(this)
+        {}
     //========== ResourceManager::SetPath
     void SetPath(const std::string& _path) { path_ = _path; }
     //========== ResourceManager::GetPath
@@ -85,12 +117,15 @@ public:
     void* Get(const unsigned long _resourceID, const unsigned long _type =0);
     //========== ResourceManager::Release
     void Release(const unsigned long _resourceID);
+    //========== ResourceManager::LevelLoader
+    LevelLoader& _LevelLoader() { return levels_; }
 private:
     //========== ResourceManager:: private members
     std::set<unsigned long> keys_;
     std::map<unsigned long, Resource*> resources_;
     std::map<std::string, unsigned long> pathIDs_;
     std::string path_;
+    LevelLoader levels_;
 };
 
 } // namespace

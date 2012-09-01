@@ -86,24 +86,24 @@ void Core::Game::MainLoop()
     Core::EntityList::iterator i, j;
     Core::EntityList entities;
     Core::ScreenList screens;
-    Core::Level lvl = levels_.GetLevel(0);
+    Core::Level* lvl = _LevelLoader().GetLevel(0);
 
     do {
         frameBegin_ = clock();
-        Core::Entity& cameraBearingEntity = lvl.GetMainEntity();
-        screens = lvl.GetEnvironment().GetScreensFor(cameraBearingEntity);
-        entities = lvl.GetEnvironment().GetEntitiesNear(cameraBearingEntity);
+        Core::Entity* cameraBearingEntity = lvl->GetMainEntity();
+        screens = lvl->GetEnvironment().GetScreensFor(*cameraBearingEntity);
+        entities = lvl->GetEnvironment().GetEntitiesNear(*cameraBearingEntity);
         // TODO check if parallel is feasable
         // entity decides where it wants to go
         for(i = entities.begin(); i != entities.end(); ++i) {
-            if(lvl.AllowEntityToLoop(*i)) {
-                (*i)->Loop(lvl.GetEnvironment());
+            if(lvl->AllowEntityToLoop(*i)) {
+                (*i)->Loop(lvl->GetEnvironment());
             }
         }
         // entity is told it collides with other stuff
         for(i = entities.begin(); i != entities.end(); ++i) {
             const Core::Screen* screen =
-                lvl.GetEnvironment().GetScreenEntityIsOn(**i);
+                lvl->GetEnvironment().GetScreenEntityIsOn(**i);
             if(!screen) {
                 D123_LOG(D123::FATAL, "entity %ld is not on any screen", (*i)->ID());
             } else if(screen->HitWall(**i)) {
@@ -122,20 +122,20 @@ void Core::Game::MainLoop()
         }
         // update locations
         for(i = entities.begin(); i != entities.end(); ++i) {
-            lvl.GetEnvironment().Move(**i);
+            lvl->GetEnvironment().Move(**i);
         }
-        lvl.GetEnvironment().ClearCache();
+        lvl->GetEnvironment().ClearCache();
 
-        lvl.GetEnvironment().PlaySounds();
+        lvl->GetEnvironment().PlaySounds();
 
-        _MainLoop(lvl);
+        _MainLoop(*lvl);
 
         if(display_) {
             display_->Render(screens, resources_);
         } else {}
 
         Sleep();
-    } while(!lvl.End());
+    } while(lvl && !lvl->End());
 }
 
 //========== Game::Sleep
