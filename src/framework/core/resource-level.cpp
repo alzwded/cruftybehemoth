@@ -12,6 +12,7 @@ Core::Resource* Core::Resource_Level::New(
         const std::string& _path,
         Core::ResourceManager* _rm)
 {
+    _rm->_LevelLoader().PushLevel(_path);
     return new Resource_Level(_path, _rm);
 }
 

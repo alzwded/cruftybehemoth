@@ -32,16 +32,16 @@ public:
     //========== LevelLoader::GetLevel
     Level* GetLevel(const int _i);
     //========== LevelLoader::PushLevel
-    void PushLevel(const unsigned long _RID)
+    void PushLevel(const std::string& _path)
     {
-        levels_.push_back(_RID);
+        levels_.push_back(std::pair<std::string, unsigned long>(_path, 0));
     }
     ////========== LevelLoader::GetMainEntity
     //Entity* GetMainEntity() { static Entity* p; return p; }
     //========== LevelLoader::ResourceManager
     ResourceManager* _ResourceManager() { return rm_; }
 private:
-    std::vector<unsigned long> levels_;
+    std::vector<std::pair<std::string, unsigned long> > levels_;
     ResourceManager* rm_;
 };
 

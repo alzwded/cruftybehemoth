@@ -160,7 +160,8 @@ void Core::ResourceManager::Release(const unsigned long _resourceID)
 //========== LevelLoader::DropLevel
 void Core::LevelLoader::DropLevel(const int _i)
 {
-    _ResourceManager()->Release(levels_[_i]);
+    if(!levels_[_i].second) return;
+    _ResourceManager()->Release(levels_[_i].second);
 }
 
 //========== LevelLoader::GetLevel
@@ -170,5 +171,6 @@ Core::Level* Core::LevelLoader::GetLevel(const int _i)
         D123_LOG(D123::ERROR, "Index %d out of range!", _i);
         throw "out of range";
     }
-    return static_cast<Level*>(_ResourceManager()->Get(levels_[_i]));
+    if(!levels_[_i].second) levels_[_i].second = _ResourceManager()->GetRID(levels_[_i].first);
+    return static_cast<Level*>(_ResourceManager()->Get(levels_[_i].second));
 }
