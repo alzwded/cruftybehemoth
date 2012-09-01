@@ -5,11 +5,22 @@ Basic, abstract, generic 2D gaming framework.
 
 Provides resource management and main loop.
 
+You just need to implement a couple of interfaces and drop raw data in and you need not worry about the boring parts when developing a game.
+
 == 2. Building ==
 Do a make to build the demo. Do a make framework-lib to generate libframework.so in ./lib.
 
-== 3. Future ==
-Implement OpenMP parallelization for AI loops and drawing an entity to a temp buffer to have the main thread compose everything in the end (it sounds less optimal than I actually have in mind.)
+== 3. Roadmap ==
+0.1-0.4: various demo releases which help stablize the framework. You should see more and more things added to the demos that show which features are becoming stable. Basically, if something's not in a demo, it means it most likely doesn't work and will be changed in the near future.
+0.5: first dist release. Extension development is C++ only, but you should be able to use it to code a simple game. Default make target is framework-dist, demos need to be explicitly build.
+0.6: initial scripting support. Scripting will work for some things, but most extensions will still be C++.
+0.7-0.9: various demo releases demonstrating the better integrated scripting support; these demos should see less and less use of C++ for extensions
+1.0: version 1.0 release. You should now be able to code extensions using either C++ or the scripting language, at your discression.
+1.1: consolidation, and any loop code will be made thread-safe in preparation for parallelization, where aplicable. When developoing your own game, you should not care about parallelization, the core should handle itself well enoguh.
+1.5: parallelization added to the core.
+1.9 or somewhere along the way: change build system from gnu make to something project based which is easier to manager. Make sucks.
+2.0: API improvement based on the experience that will have been gained up to this point. Backwards compatibility at source level may be broken as long as the new API is more clear, transparent and elegant. 
+2.5: add physics to core. Again, this might break compatibility with the resource files, but this will be taken into account for the 2.0 release. 2.0 will be forwards-compatible. If something will have been overlooked for the 2.5 release, then 2.5 will at least be backwards compatible and provide some form of compatibility mode, but let's hope the design and planning are done by 2.0 and we know what we're doing.
 
 == 4. TODO ==
 * documentation

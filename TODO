@@ -1,6 +1,5 @@
 ::CORE::
 * add audio interface
-* add OpenMP for AI loops (where aplicable) and rendering (where aplicable)
 * implement Background and Foreground
 * reimplement collision detection to account for velocity
 * implement Entity_Exit and add mechanism to change levels -- level change will be done by the PC entity that collides with it
@@ -8,6 +7,12 @@
 * implement EntitySpawner and Resource_Entity to load entities
 * implement Resource_Level and dependencies to load levels
 * add support for a scripting language (think Lua, but I might implement my own, or generate interfaces for any scripting language) so that it will not be necessary to code in c++
+== Parallelisation ==
+* store entities in something that openMP can run over
+* I guess a lazy vector would be good, and then based on the time left in a frame start moving items to the left and maybe resize it down
+* screen::add/removeEntity have locks
+* D123:: add locks to have continuous logging output from one thread at a time
+* add OpenMP for AI loops (where aplicable) and rendering (where aplicable, entity buffer)
 
 ::RES::
 * low priority
