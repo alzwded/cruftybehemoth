@@ -7,69 +7,19 @@
 #include <cstring>
 #include <cstdlib>
 
+//========== Game::HandleParameters
 //========== Game::GetHelp
-inline std::string Core::Game::GetHelp()
-{
-    std::stringstream s;
-    s << "game-framework-1 v" << CORE_VERSION << std::endl;
-    s << "flags:" << std::endl;
-    s << "\t--resource-path path/to/stuff   set the path to your resource dir" << std::endl;
-    s << "\t--help                          print this message" << std::endl;
-    s << "\t--frame-speed N                 set the speed of a frame (default 17ms" << std::endl;
-    s << "\t--debug-level N                 set verbosity level" << std::endl;
-    s << "\t--log-file path/to/file         set verbosity level" << std::endl;
-    s << std::endl;
-    return s.str();
-}
+//========== Game::ShowHelp
+//========== Game::SetResourcePath
+//========== Game::SetLogFile
+//========== Game::SetDebugLevel
+//========== Game::SetFrameSpeed
+#include "game.ii"
 
 //========== Game::Main
 int Core::Game::Main(int argc, char* argv[])
 {
-    char* logFile = NULL;
-
-    for(int i = 1; i < argc; ++i) {
-        if(strncmp(argv[i], "--resource-path", 15) == 0) {
-            if(i < argc) ++i;
-            else {
-                std::cerr << "invalid arguments" << std::endl;
-                return -2;
-            }
-            resources_.SetPath(argv[i]);
-        } else if(strncmp(argv[i], "--help", 6) == 0) {
-            std::cout << GetHelp();
-            return -1;
-        } else if(strncmp(argv[i], "--frame-speed", 13) == 0) {
-            if(i < argc) ++i;
-            else {
-                std::cerr << "invalid arguments" << std::endl;
-                return -2;
-            }
-            frameSpeed_ = atoi(argv[i]);
-        } else if(strncmp(argv[i], "--debug-level", 13) == 0) {
-            if(i < argc) ++i;
-            else {
-                std::cerr << "invalid arguments" << std::endl;
-                return -2;
-            }
-            D123::Debug::Level() = D123::Debug::LevelFromInt(atoi(argv[i]));
-        } else if(strncmp(argv[i], "--log-file", 11) == 0) {
-            if(i < argc) ++i;
-            else {
-                std::cerr << "invalid arguments" << std::endl;
-                return -2;
-            }
-            logFile = argv[i];
-        }
-    }
-    if(logFile)
-    {
-        FILE* f = fopen(logFile, "w");
-        if(f) {
-            D123::Debug::File() = f;
-        } else {
-            std::cerr << "cannot open " << logFile << std::endl;
-        }
-    }
+    HandleParameters(argc, argv);
     resources_.Load();
     _MainInit(argc, argv);
     //do while(MainLoop());
@@ -81,7 +31,7 @@ int Core::Game::Main(int argc, char* argv[])
 }
 
 //========== Game::MainLoop
-void Core::Game::MainLoop()
+inline void Core::Game::MainLoop()
 {
     Core::EntityList::iterator i, j;
     Core::EntityList entities;

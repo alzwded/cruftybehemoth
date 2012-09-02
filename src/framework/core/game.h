@@ -43,9 +43,22 @@ public:
     //========== Game::Main
     int Main(int argc, char* argv[]);
 
+public:
+    //========== Game::SetResourcePath
+    void SetResourcePath(const char*);
+    //========== Game::SetFrameSpeed
+    void SetFrameSpeed(const char*);
+    //========== Game::SetDebugLevel
+    void SetDebugLevel(const char*);
+    //========== Game::ShowHelp
+    void ShowHelp(const char*);
+    //========== Game::SetLogFile
+    void SetLogFile(const char*);
 private:
     //========== Game::MainLoop
     void MainLoop();
+    //========== Game::HandleParameters
+    void HandleParameters(int argc, char* argv[]);
     //========== Game::GetHelp
     std::string GetHelp();
     //========== Game::Sleep

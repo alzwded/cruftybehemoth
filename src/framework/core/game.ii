@@ -1,0 +1,208 @@
+#include <iomanip>
+
+typedef enum { YES =0, NO =1, FILE_NOT_FOUND =2 } HasParameter_t;
+
+struct Option {
+    const char* LongName;
+    const char ShortName;
+    const HasParameter_t HasParameter;
+    const char* Description;
+    void (Core::Game::*Callback)(const char*);
+};
+
+static const Option Options[] = {
+    { "resource-path", 'R', YES, "set the path to your resource directory", &Core::Game::SetResourcePath },
+    { "help", 'h', NO, "print this message", &Core::Game::ShowHelp },
+    { "frame-speed", 'S', YES, "set the minimum speed of a frame", &Core::Game::SetFrameSpeed },
+    { "debug-level", 'L', YES, "set verbosity level", &Core::Game::SetDebugLevel },
+    { "log-file", 'F', FILE_NOT_FOUND, "dump logging output to a file", &Core::Game::SetLogFile },
+    { NULL, '\0', FILE_NOT_FOUND, "NULL terminator", NULL }
+};
+
+//========== Game::HandleParameters
+inline void Core::Game::HandleParameters(int argc, char* argv[])
+{
+    for(int i = 1; i < argc; ++i) {
+        char* s = argv[i];
+        char* param;
+        size_t len = strlen(s);
+        const Option* p = &Options[0];
+        for(;
+            p->LongName != NULL && p->ShortName != '\0';
+            ++p)
+        {
+            if(len >= 2) {
+                if(s[0] == '-' && s[1] == '-') {
+                    int lengthLongName = strlen(p->LongName);
+                    if(strncmp(s + 2, p->LongName, lengthLongName) == 0)
+                    {
+                        if(len == 2 + lengthLongName) {
+                            if(p->HasParameter == YES) {
+                                if(++i < argc) {
+                                    if(p->Callback)
+                                    (this->*p->Callback)(argv[i]);
+                                    break;
+                                } else {
+                                    D123_LOG(D123::FATAL, "Option %s requires a parameter!", p->LongName);
+                                    exit(-2);
+                                }
+                            } else if(p->HasParameter == NO) {
+                                if(p->Callback)
+                                (this->*p->Callback)(NULL);
+                                break;
+                            } else if(p->HasParameter == FILE_NOT_FOUND) {
+                                if(i+1 < argc) {
+                                    if(strlen(argv[i+1]) >= 2 && argv[i+1][0] == '-') {
+                                        if(p->Callback)
+                                        (this->*p->Callback)(NULL);
+                                        break;
+                                    } else {
+                                        ++i;
+                                        if(p->Callback)
+                                        (this->*p->Callback)(argv[i]);
+                                        break;
+                                    }
+                                } else {
+                                    ++i;
+                                    if(p->Callback)
+                                    (this->*p->Callback)(argv[i]);
+                                }
+                            }
+                        } else if(s[2 + lengthLongName] == '=') {
+                            param = &s[2 + lengthLongName + 1];
+                            if(p->HasParameter == NO) {
+                                D123_LOG(D123::FATAL, "Option %s does not take a parameter!", p->LongName);
+                                exit(-2);
+                            } else {
+                                if(p->Callback)
+                                (this->*p->Callback)(param);
+                                break;
+                            }
+                        } else {
+                            D123_LOG(D123::FATAL, "Unknown option %s", s);
+                            exit(-2);
+                        }
+                    } else {
+                        continue;
+                    }
+                } else if(s[0] == '-') {
+                    if(s[1] == p->ShortName) {
+                        if(strlen(s) > 2) {
+                            param = s + 2;
+                            if(p->HasParameter == NO) {
+                                D123_LOG(D123::FATAL, "Option %s does not take a parameter!", p->LongName);
+                                exit(-2);
+                            } else {
+                                (this->*p->Callback)(param);
+                                break;
+                            }
+                        } else {
+                            if(p->HasParameter == YES) {
+                                D123_LOG(D123::FATAL, "Option %s requires a parameter!", p->LongName);
+                                exit(-2);
+                            } else {
+                                (this->*p->Callback)(NULL);
+                                break;
+                            }
+                        }
+                    } else {
+                        continue;
+                    }
+                } else {
+                    D123_LOG(D123::FATAL, "Unknown option %s", s);
+                    exit(-2);
+                }
+            } else {
+                D123_LOG(D123::FATAL, "Unknown option %s", s);
+                exit(-2);
+            }
+        }
+        if(p->LongName == NULL && p->ShortName == '\0') {
+            D123_LOG(D123::FATAL, "What is %s for?", s);
+            exit(-2);
+        }
+    }
+}
+
+//========== Game::GetHelp
+inline std::string Core::Game::GetHelp()
+{
+    std::stringstream s;
+    const Option* p = &Options[0];
+
+    s << "cruftybehemoth-" << CORE_VERSION << std::endl;
+    s << "options:" << std::endl << std::left;
+
+    for(; p->LongName != NULL && p->ShortName != '\0'; ++p)
+    {
+        s << std::left;
+        s << "--" << std::setw(15) << p->LongName << std::setw(1) << ",";
+        if((p->ShortName) != '\0') s << std::setw(1) << '-' << p->ShortName;
+        else s << std::setw(2) << "  ";
+        int output = 2 + ((strlen(p->LongName) < 15) ? 15 : strlen(p->LongName)) + 2;
+        if(output < 30) {
+            s << std::setw(30 - output) << " ";
+        } else {
+            s << std::endl << std::setw(31) << " " << std::setw(0);
+        }
+        s << std::left << std::setw(0);
+        int lenOfDesc = strlen(p->Description);
+        for(int i = 0; i < lenOfDesc / 49 + 1; ++i)
+        {
+            int j;
+            for(j = 0; j < 49; ++j) {
+                if(i * 49 + j > lenOfDesc) break;
+                s << (char)(p->Description[i * 49 + j]);
+            }
+            if(i * 49 + j < lenOfDesc) {
+                s << std::endl << std::setw(31) << " " << std::setw(0);
+            }
+        }
+        s << std::endl;
+    }
+    return s.str();
+}
+
+//========== Game::SetResourcePath
+void Core::Game::SetResourcePath(const char* _path)
+{
+    resources_.SetPath(_path);
+}
+
+//========== Game::SetFrameSpeed
+void Core::Game::SetFrameSpeed(const char* _spd)
+{
+    int fs = atoi(_spd);
+    if(fs > 0) 
+        frameSpeed_ = fs;
+    else {
+        D123_LOG(D123::FATAL, "%d is not a valid frame speed", fs);
+        exit(1);
+    }
+}
+
+//========== Game::SetDebugLevel
+void Core::Game::SetDebugLevel(const char* _lvl)
+{
+    int lvl = atoi(_lvl);
+    D123::Debug::Level() = D123::Debug::LevelFromInt(lvl);
+}
+
+//========== Game::SetShowHelp
+void Core::Game::ShowHelp(const char*)
+{
+    std::cout << GetHelp();
+    exit(-1);
+}
+
+//========== Game::SetLogFile
+void Core::Game::SetLogFile(const char* _logFile)
+{
+    const char* logFile = ((_logFile) ? _logFile : "game.log");
+    FILE* f = fopen(logFile, "w");
+    if(!f) {
+        D123_LOG(D123::FATAL, "could not open %s", logFile);
+        exit(-7);
+    }
+    D123::Debug::File() = f;
+}
