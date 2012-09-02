@@ -20,7 +20,12 @@ public:
     Entity_Demo(const Geom::Point& _p)
         : Core::Entity(_p)
         , accelerating_(0)
-        {}
+        { D123_LOG(D123::INFO, "Entity %ld: I live!", ID()); }
+    //========== Entity_Demo::~Entity_Demo
+    ~Entity_Demo()
+    {
+        D123_LOG(D123::INFO, "Entity %ld: Tell my family how I died!", ID());
+    }
     //========== Entity_Demo::Loop
     virtual void Loop(const Core::Environment&);
     //========== Entity_Demo::HitBox
