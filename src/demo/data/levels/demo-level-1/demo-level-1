@@ -7,4 +7,4 @@ screen:-1:0:background-1:foreground-1
 screen:-1:-1:background-1:foreground-1
 screen:0:-1:background-1:foreground-1
 screen:1:-1:background-1:foreground-1
-entity:200.0:100.0:data/entity1
+entity:200.0:100.0:data/entity-1

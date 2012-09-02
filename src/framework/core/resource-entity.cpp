@@ -15,18 +15,22 @@ void Core::Resource_Entity::Load()
     // read initial velocity, graphics blocks, (sound resources TODO)
     float f1, f2;
     assert(2 == fscanf(f, "%f%f", &f1, &f2));
+    fscanf(f, "%*[\n]");
     es_->initialvelocity_ = Geom::Point(f1, f2);
     char* s;
     bool loop = false;
     Core::BlockBundle b;
-    do {
+    do { // FIXME loop is bad
+        if(feof(f)) break; // FIXME read \n AFTER, not before the loop
         fscanf(f, "%a[^\n]", &s);
+        fscanf(f, "%*[\n]");
         if(strlen(s) >= 2 && s[0] == '=' && s[1] == '=') loop = false;
-        free(s);
         int x, y;
-        assert(sscanf(s, "%d %d %a[^\n]", &x, &y, &s) == 3);
-        b.AddBlock(Core::Block(GetResourceManager()->GetRID(s), x, y));
+        char* path;
+        assert(sscanf(s, "%d %d %a[^\n]", &x, &y, &path) == 3);
+        b.AddBlock(Core::Block(GetResourceManager()->GetRID(path), x, y));
         free(s);
+        free(path);
     }while(loop);
     es_->blocks_ = b;
 

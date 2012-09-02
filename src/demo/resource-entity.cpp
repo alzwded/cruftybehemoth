@@ -18,6 +18,7 @@ void Demo::Resource_Entity::_Load(FILE* f, Core::EntitySpawner* _es)
         D123_LOG(D123::ERROR, "NULL _es");
         return;
     }
+    fscanf(f, "%*[\n]");
     fscanf(f, "%d", &es->accelerating_);
 }
 

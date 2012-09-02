@@ -1,4 +1,5 @@
 ::CORE::
+* IsA mechanism in resources blows, have each method do a return _clssid == CLSSID || base::IsA(_clssid) instead of the crap that's going on now
 * add audio interface
 * implement Background and Foreground
 * reimplement collision detection to account for velocity

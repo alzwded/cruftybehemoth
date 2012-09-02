@@ -30,6 +30,8 @@ void Core::Resource_Level::Load()
     lvl_ = Core::Level::New();
     while(!feof(f)) {
         char* type;
+        fscanf(f, "%*[\n]");
+        if(feof(f)) break; //FIXME
         fscanf(f, "%a[^:]:", &type);
         if(strncmp(type, "screen", 6) == 0) {
             D123_LOG(D123::TRACE, "loading screen");
@@ -37,6 +39,7 @@ void Core::Resource_Level::Load()
             char* bgPath;
             char* fgPath;
             assert(4 == fscanf(f, "%d:%d:%a[^:]:%a[^\n]", &x, &y, &bgPath, &fgPath));
+            fscanf(f, "%*[\n]");
             // new screen
             Screen s;
             s._Background() = GetResourceManager()->GetRID(bgPath);

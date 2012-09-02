@@ -48,9 +48,9 @@ public:
     //========== Resource_Entity::Clssid
     virtual unsigned long Clssid() const { return Demo::Resource_Entity::CLSSID; }
     //========== Resource_Entity::IsA
-    virtual bool IsA(const unsigned long _clssid)
+    virtual bool IsA(unsigned long _clssid) const
     {
-        return Clssid() == _clssid || Core::Resource_Entity::IsA(_clssid);
+        return Core::Resource_Entity::IsA(_clssid) || _clssid == Core::Resource_Entity::CLSSID;
     }
     //========== Resource_Entity::NewEntitySpawner
     virtual Core::EntitySpawner* NewEntitySpawner()
