@@ -49,10 +49,7 @@ private:
 class Resource {
 protected:
     //========== Resrouce::Resource
-    Resource(const std::string& _path, ResourceManager* _rm)
-        : path_(_path)
-        , rm_(_rm)
-        {}
+    Resource(const std::string& _path, ResourceManager* _rm);
 public:
     //========== Resrouce::~Resource
     virtual ~Resource() {}

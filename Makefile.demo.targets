@@ -1,10 +1,12 @@
 include Makefile.framework
 
-demo-lib: src/demo/resource-picture.cpp
+demo-lib: src/demo/resource-picture.cpp src/demo/resource-entity.cpp src/demo/game.cpp
 	mkdir -p obj/demo
 	$(CC) $(CFLAGS) `pkg-config --cflags gdk-pixbuf-2.0 gtk+-2.0` -o obj/demo/resource-picture.o src/demo/resource-picture.cpp
 	$(CC) $(CFLAGS) `pkg-config --cflags gdk-pixbuf-2.0 gtk+-2.0` -o obj/demo/game.o src/demo/game.cpp
-	$(CC) -shared $(LDFLAGS) -o lib/libdemo.so obj/demo/resource-picture.o obj/demo/game.o `pkg-config --libs gdk-pixbuf-2.0 gtk+-2.0` -lcruftybehemoth
+	$(CC) $(CFLAGS) `pkg-config --cflags gdk-pixbuf-2.0 gtk+-2.0` -o obj/demo/entity-demo.o src/demo/entity-demo.cpp
+	$(CC) $(CFLAGS) `pkg-config --cflags gdk-pixbuf-2.0 gtk+-2.0` -o obj/demo/resource-entity.o src/demo/resource-entity.cpp
+	$(CC) -shared $(LDFLAGS) -o lib/libdemo.so obj/demo/resource-picture.o obj/demo/game.o obj/demo/resource-entity.o obj/demo/entity-demo.o `pkg-config --libs gdk-pixbuf-2.0 gtk+-2.0` -lcruftybehemoth
 
 demo-res: src/demo/resources src/demo/data
 	mkdir -p bin

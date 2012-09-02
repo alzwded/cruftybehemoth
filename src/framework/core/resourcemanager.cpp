@@ -174,3 +174,8 @@ Core::Level* Core::LevelLoader::GetLevel(const int _i)
     if(!levels_[_i].second) levels_[_i].second = _ResourceManager()->GetRID(levels_[_i].first);
     return static_cast<Level*>(_ResourceManager()->Get(levels_[_i].second));
 }
+//========== Resource::Resource
+Core::Resource::Resource(const std::string& _path, Core::ResourceManager* _rm)
+    : path_(_path)
+    , rm_(_rm)
+    {}

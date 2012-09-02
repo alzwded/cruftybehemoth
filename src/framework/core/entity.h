@@ -29,7 +29,6 @@ public:
     virtual ~Entity() {}
     //========== Entity::Loop
     // AI loop
-    // TODO break into Loop_Decision, (Resolve_Collisions), Loop_Perform
     virtual void Loop(const Environment&) =0;
     //========== Entity::HitBox
     virtual const Geom::Region& HitBox() const =0;
@@ -100,7 +99,7 @@ public:
     //========== Entity::ClonePtr
     virtual Entity* ClonePtr() const =0;
 
-protected:
+public:
     //========== Entity::_GetVelocity
     Geom::Point& _GetVelocity()
     {

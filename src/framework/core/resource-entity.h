@@ -13,16 +13,13 @@ namespace Core {
 
 //---------- Core::Resouce_Entity
 class Resource_Entity 
-    : public virtual Core::Resource
+    : public Core::Resource
 {
 protected:
     //========== Resrouce_Entity::Resrouce_Entity
     Resource_Entity(
             const std::string& _path,
-            Core::ResourceManager* _rm)
-        : Resource(_path, _rm)
-        , es_(NULL)
-        {}
+            Core::ResourceManager* _rm);
 public:
     //========== Resrouce_Entity::CLSSID
     static const unsigned long CLSSID = 1;
@@ -33,13 +30,13 @@ private:
     virtual void Load();
 public:
     //========== Resource_Entity::_Load
-    virtual void _Load(FILE* f) =0;
+    virtual void _Load(FILE* f, EntitySpawner*) =0;
     //========== Resrouce_Entity::Loaded
     // TODO move to abstract class
     virtual bool Loaded() { return es_ != NULL; }
     //========== Resrouce_Entity::Unload
     // TODO move to abstract class
-    virtual void Unload();
+    virtual void Release();
     //========== Resource_Entity::Get
     // TODO move to abstract class
     // no, it should not return Spawn, it should return the EntitySpawner
