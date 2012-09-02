@@ -99,7 +99,7 @@ public:
     //========== Entity::ClonePtr
     virtual Entity* ClonePtr() const =0;
 
-public:
+protected:
     //========== Entity::_GetVelocity
     Geom::Point& _GetVelocity()
     {
