@@ -18,7 +18,7 @@ class DisplayAdapter;
 class EntitySpawner;
 class Game; // TODO maybe it should not be the one to call OnCollision
 
-//---------- Geom::Entity
+//---------- Core::Entity
 class Entity {
 public:
     Entity(const Geom::Point& _location = Geom::Point())
@@ -34,12 +34,17 @@ public:
     virtual const Geom::Region& HitBox() const =0;
     //========== Entity::IsHitBoxDamaging
     virtual bool IsHitBoxDamaging() const =0;
+    //========== Entity::CLSSID
+    static const unsigned long CLSSID = 0x10;
     //========== Entity::Clssid
-    virtual unsigned long Clssid() const =0;
+    virtual unsigned long Clssid() const
+    {
+        return CLSSID;
+    }
     //========== Entity::IsA
     virtual bool IsA(const unsigned long _clssid) const
     {
-        return Clssid() == _clssid;
+        return CLSSID == _clssid;
     }
 
     //========== Entity::ID

@@ -17,6 +17,7 @@ class __entity : public virtual Core::Entity {
     __entity() : hb_(Geom::Point(0, 0), 0, 0) {}
 public:
     virtual void Loop(const Core::Environment&) {}
+    virtual bool IsA(const unsigned long _clssid) { return false; }
     virtual const Geom::Region& HitBox() const { return hb_; }
     virtual bool IsHitBoxDamaging() const { return false; }
     virtual unsigned long Clssid() const { return 0xDEADB33F; }

@@ -25,6 +25,11 @@ public:
     static const unsigned long CLSSID = 1;
     //========== Resrouce_Entity::Clssid
     virtual unsigned long Clssid() const { return Resource_Entity::CLSSID; }
+    //========== Resrouce_Entity::IsA
+    virtual bool IsA(const unsigned long _clssid) const
+    {
+        return CLSSID == _clssid || Core::Resource::IsA(_clssid);
+    }
 private:
     //========== Resrouce_Entity::Load
     virtual void Load();

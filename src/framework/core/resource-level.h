@@ -25,6 +25,11 @@ public:
     static const unsigned long CLSSID = 0x10;
     //========== Resource_Level::Clssid
     virtual unsigned long Clssid() const { return Resource_Level::CLSSID; }
+    //========== Resource_Level::IsA
+    virtual bool IsA(const unsigned long _clssid) const
+    {
+        return CLSSID == _clssid || Core::Resource::IsA(_clssid);
+    }
     //========== Resource_Level::Load
     virtual void Load();
     //========== Resource_Level::Loaded

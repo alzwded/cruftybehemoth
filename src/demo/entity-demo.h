@@ -36,6 +36,11 @@ public:
     static const unsigned long CLSSID = 0x80000200;
     //========== Entity_Demo::Clssid
     virtual unsigned long Clssid() const { return CLSSID; }
+    //========== Entity_Demo::IsA
+    virtual bool IsA(const unsigned long _clssid) const
+    {
+        return CLSSID == _clssid || Core::Entity::IsA(_clssid);;
+    }
     //========== Entity_Demo::OnCollision
     virtual void OnCollision(const Core::Entity&, const Geom::Point&);
     //========== Entity_Demo::ClonePtr

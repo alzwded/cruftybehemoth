@@ -10,8 +10,6 @@
 
 namespace Core {
 
-const unsigned long ENTITY_EXIT = 1;
-
 //---------- Core::Entity_Exit
 class Entity_Exit
     : public Entity
@@ -44,8 +42,15 @@ public:
         // TODO figure out how to tell the game to display the next environment
         environment_.GetLevel()->GetEnvironment() = nextEnvironment_;
     }
+    //========== Entity_Exit::CLSSID
+    static const unsigned long CLSSID = 0x21;
     //========== Entity_Exit::Clssid
-    virtual unsigned long Clssid() const { return ENTITY_EXIT; }
+    virtual unsigned long Clssid() const { return Core::Entity_Exit::CLSSID; }
+    //========== Entity_Exit::IsA
+    virtual bool IsA(const unsigned long _clssid) const
+    {
+        return CLSSID == _clssid || Core::Entity::IsA(_clssid);
+    }
     //========== Entity_Exit::IsHitBoxDamaging
     virtual bool IsHitBoxDamaging() const { return false; }
     //========== Entity_Exit::HitBox

@@ -53,10 +53,12 @@ protected:
 public:
     //========== Resrouce::~Resource
     virtual ~Resource() {}
+    //========== Resrouce::CLSSID
+    static const unsigned long CLSSID = 0xD00078;
     //========== Resrouce::Clssid
-    virtual unsigned long Clssid() const =0;
+    virtual unsigned long Clssid() const { return CLSSID; }
     //========== Resrouce::IsA
-    virtual bool IsA(unsigned long _clssid) const { return Clssid() == _clssid; };
+    virtual bool IsA(unsigned long _clssid) const { return CLSSID == _clssid; };
     //========== Resrouce::Load
     virtual void Load() =0;
     //========== Resrouce::Release
