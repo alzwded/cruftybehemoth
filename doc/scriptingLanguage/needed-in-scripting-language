@@ -1,0 +1,69 @@
+Purpose:
+    have an idea of what will be needed in a scripting language and
+    how it should work
+    NOT FINAL
+
+keywords:
+    this -- refers to the current instance
+    other -- refers to some other entity nearby
+    likeme -- refers to some other entity like me nearby
+    others -- the other entities nearby, coroutine behaviour
+    likeme -- the other entities nearby of the same type as the current
+              instance, coroutine behaviour
+    yield -- coroutine behaviour
+    return -- single return
+
+builtins:
+    distance(X)
+
+imaginary example:
+
+{ comments! }
+{ multiline
+  comment }
+
+{ imports towards(entity, maxX, maxY) , away(entity, maxX, maxY) }
+include data/script-util ;
+
+{ some comment }
+func decide(): Point ;
+    if(other.IsA(data/entity-pc))
+        if(distance(other) < 2)
+            this.fleeing = 1 ;
+            return away(other, 2, 2) ;
+        else
+            this.fleeing = 0 ;
+            return towards(other, 2, 2) ;
+        fi
+    fi
+cnuf
+
+func nearbyFleeing(): Entity ;
+    if(likeme.fleeing)
+        yield likeme ;
+    fi
+cnuf
+
+func decideOnPeerPressure(): bool
+    if(distance(likeme) < 5)
+        if(likeme.decided)
+            this.velocity = likeme.velocity ;
+            log
+                TRACE "following %d to (%f,%f)" likeme.ID(),
+                    likeme.velocity.X(), likeme.velocity.Y() ;
+                INFO "i'm a bit scared to do that..." ;
+            gol
+            return ;
+        fi
+    fi
+cnuf
+
+{ some other comment }
+func main(): void
+    if(decideOnPeerPressure())
+        return ;
+    else
+        log INFO "that's it, I'm going in all by myself!" ; gol
+        this.velocity = decide() ;
+    fi
+cnuf
