@@ -8,6 +8,10 @@
 * implement EntitySpawner and Resource_Entity to load entities
 * implement Resource_Level and dependencies to load levels
 * add support for a scripting language (think Lua, but I might implement my own, or generate interfaces for any scripting language) so that it will not be necessary to code in c++
+== Garbage Collection ==
+* Add ref count on Resource
+* Run garbage collector after AI loop and display rendering and whatnot until frame time is close to running out (i.e. only clear some resources in the 17/34 miliseconds)
+* adapt it so that if it ever takes too much time, make it be less aggressive
 == Parallelisation ==
 * store entities in something that openMP can run over
 * I guess a lazy vector would be good, and then based on the time left in a frame start moving items to the left and maybe resize it down
