@@ -1,4 +1,7 @@
 %{
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 /*
     preliminary grammar
 
@@ -12,11 +15,18 @@
         could return quoted string from the lexer itself?
 */
 extern FILE* yyin;
-int yyerror(char*);
-int yylex();
+#define Entity void
+#define Level void
+#define YYDEBUG 1
+int yyerror(Entity* THIS, Level* LVL, char*);
 %}
 
-%glr-parser
+%define api.pure
+%define api.push_pull "push"
+/*%pure-parser*/
+
+%parse-param { Entity* THIS }
+%parse-param { Level* LVL }
 
 %union {
     char* str_val;
@@ -178,9 +188,9 @@ real:       INT '.'
     |       INT '.' INT
     ;
 
-string:     '"' STRING '"' { $$ = STRING; }
-    |       '\'' STRING '\'' { $$ = STRING; }
-    |       "@@@\"" STRING "\"@@@" { $$ = STRING; }
+string:     '"' STRING '"' { $$ = $2; }
+    |       '\'' STRING '\'' { $$ = $2; }
+    |       "@@@\"" STRING "\"@@@" { $$ = $2; }
     ;
 
 basic_expression:
@@ -231,19 +241,19 @@ statement:  ifStatement
 
 %%
 
-int yyerror(char* s)
+int yylex(YYSTYPE *lvalp);
+
+int yyerror(Entity* THIS, Level* LVL, char* s)
 {
-    extern int yylineno;
-    extern int yycolno;
-    extern char* yytext;
+    /*
     fprintf(stderr, "ERROR: %s near '", s); 
     for(int i = 0; i < strlen(yytext); ++i) {
         if(isprint(yytext[i]) && yytext[i] != '\n') putc(yytext[i], stderr);
         else fprintf(stderr, "#%X", yytext[i]);
     }   
     fprintf(stderr, "' on line %d col %d\n", yylineno, yycolno);
-    //exit(1);
-    args.clear();
-    args.push_back("");
+    //exit(1);*/
 }
+
+int main() { return 0; }
 
