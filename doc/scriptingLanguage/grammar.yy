@@ -13,6 +13,10 @@
 
     TODO quoted string vs. identifier
         could return quoted string from the lexer itself?
+
+    TODO increment, decrement operations
+
+    bison -dtv *.yy
 */
 extern FILE* yyin;
 #define Entity void
@@ -60,6 +64,7 @@ int yyerror(Entity* THIS, Level* LVL, char*);
 %%
 
 thing:      /* empty */
+    |       varDef
     |       include
     |       func
     ;
@@ -101,25 +106,31 @@ paramList:  /* empty */
     |       paramList "," IDENTIFIER
     ;
 
-elsifStatement:
+nonEmptyElsifStatement:
             "elsif" '(' expression ')'
                 statement
-    |       elsifStatement
+    |       nonEmptyElsifStatement
             "elsif" '(' expression ')'
                 statement
     ;
 
-ifStatement:
-            "if" "(" expression ")"
-                statement
-            elsifStatement
+ifStatementTail:
             "fi"
-    |       "if" "(" expression ")"
+    |       "else"
                 statement
-            elsifStatement
+            "fi"
+    |       nonEmptyElsifStatement
+            "fi"
+    |       nonEmptyElsifStatement
             "else"
                 statement
             "fi"
+    ;
+            
+ifStatement:
+            "if" "(" expression ")"
+                statement
+            ifStatementTail
     ;
 
 memberAccess:
