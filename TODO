@@ -1,50 +1,59 @@
 ::CORE::
-* IsA mechanism in resources blows, have each method do a return _clssid == CLSSID || base::IsA(_clssid) instead of the crap that's going on now
-* add audio interface
-* implement Background and Foreground
-* reimplement collision detection to account for velocity
-* implement Entity_Exit and add mechanism to change levels -- level change will be done by the PC entity that collides with it
-* decide on BlockBundle implementation to account for animations, location_, have it be abstract enough to allow the implementation of any DisplayAdapter
-* implement EntitySpawner and Resource_Entity to load entities
-* implement Resource_Level and dependencies to load levels
-* add support for a scripting language (think Lua, but I might implement my own, or generate interfaces for any scripting language) so that it will not be necessary to code in c++
+001 * [low] add audio interface
+002 * [high] implement Background and Foreground, common abstract class
+003 * reimplement collision detection to account for velocity (the current collision mechanism is stupid)
+004 * [high] implement Entity_Exit and add mechanism to change levels -- level change will be done by the PC entity that collides with it
+005 * for that matter, define a Entity_PC interface/abstract class
+006 * decide on BlockBundle implementation to account for animations, location_, have it be abstract enough to allow the implementation of any DisplayAdapter
+007 * add support for a scripting language (think Lua, but I might implement my own, or generate interfaces for any scripting language) so that it will not be necessary to code in c++
 == Garbage Collection ==
-* Add ref count on Resource
-* Run garbage collector after AI loop and display rendering and whatnot until frame time is close to running out (i.e. only clear some resources in the 17/34 miliseconds)
-* adapt it so that if it ever takes too much time, make it be less aggressive
+008 * Add ref count on Resource
+009 * Run garbage collector after AI loop and display rendering and whatnot until frame time is close to running out (i.e. only clear some resources in the 17/34 miliseconds)
+010 * adapt it so that if it ever takes too much time, make it be less aggressive (optimisation)
 == Parallelisation ==
-* store entities in something that openMP can run over
-* I guess a lazy vector would be good, and then based on the time left in a frame start moving items to the left and maybe resize it down
-* screen::add/removeEntity have locks
-* D123:: add locks to have continuous logging output from one thread at a time
-* add OpenMP for AI loops (where aplicable) and rendering (where aplicable, entity buffer)
+011 * store entities in something that openMP can run over
+012 * I guess a lazy vector would be good, and then based on the time left in a frame start moving items to the left and maybe resize it down
+013 * screen::add/removeEntity have locks
+014 * D123:: add locks to have continuous logging output from one thread at a time
+015 * [low] add OpenMP for AI loops (where aplicable) and rendering (where aplicable, entity buffer)
+== Scripting ==
+    * see doc/scriptingLanguage
+016 * lexer
+    * parser
+    * basic instruction chaining
+017 * coroutine behaviour
+018 * improve coroutine behaviour to actually work like coroutines instead of one method executing completely and returning a list used by the caller, they should be coroutines
+019 * [high] add ScriptedEntity as the base class for Entity defined through the scripting language
+020 * [high] add ScriptedScreen, idem
+
 
 ::RES::
-* low priority
-* resources will be stored in compressed files and the Resource adapters will need to read their data from a stream rather than from a file
-* add some rudimentary encryption
+    * low priority
+021 * [low] resources will be stored in compressed files and the Resource adapters will need to read their data from a stream rather than from a file
+022 * [low] add some rudimentary encryption
 
 ::GEOM::
-* reimplement collision detection to be more general (the current one is stupid)
+023 * reimplement collision detection to be more general (the current one is stupid)
+    * account for velocity etc, should return collision point on collision
 
 ::DOC::
-* add documentation for interfaces in the source files
-* add docomentation for why things work as they do
-* write the README
+024 * add documentation for interfaces in the source files
+    * add docomentation for why things work as they do
+025 * write the README
 
 ::DEMO::
 == GTK demo ==
-* add png renderer
-* add moving entities
-* add some pool-ball moving logic
-* add input interface (keyboard, mouse, gamepad)
+026 * decided on cairo
+    * add png renderer
+    * add moving entity
+    * add some pool-ball moving logic
+027 * add input interface (keyboard, mouse, gamepad)
 == Scripting demo ==
-* depends on scripting support in Core
-* TODO
+LTG * depends on scripting support in Core
+    * TODO
 == Advanced demo ==
-* TODO
-* should use some real graphics engine like Irrlicht
+LTG * TODO
+    * should use some real graphics engine like Irrlicht
 
 ::MISC::
-* finish up TODO list
-* attach some issue-tracking system to the project to set long term goals and set up some planning
+LTG * attach some issue-tracking system to the project to set long term goals and set up some planning
