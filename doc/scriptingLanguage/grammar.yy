@@ -241,6 +241,16 @@ logStatement:
             "log" logElement "gol"
     ;
 
+breakStatement:
+            "break" ';'
+            /* break one level */
+    |       "break" integer ';'
+            /* break number of levels */
+    |       "break" varName ';'
+            /* break until breaking the list variable with name varName */
+            /* can also be name of lambda */
+    ;
+
 statement:  ifStatement
     |       loopStatement
     |       assignationStatement
@@ -248,6 +258,7 @@ statement:  ifStatement
     |       yieldStatement
     |       expression
     |       logStatement
+    |       breakStatement
     ;
 
 %%

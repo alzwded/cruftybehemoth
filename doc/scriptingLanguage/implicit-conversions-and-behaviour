@@ -4,6 +4,80 @@ float = int -> promote
 
 int = entity -> entity.ID()
 entity = int -> find(p => entity.ID() == int)
+e.g.
+func a(): null
+    e : entity ;
+    f : entity ;
+    e = likeme ;
+
+    id : int ;
+    id = e ;
+    log { for each entity like me nearby print its id }
+        INFO "entity like me: %ld" id ;
+    gol
+
+    f = id ;
+    log { same thing, runs along side the previous logging }
+        INFO "entity like me: %ld" f.ID() ;
+    gol
+cnuf
+{ given 3 nearby entities like me with IDs 6, 7, 8, it will log
+  entity like me: 6
+  entity like me: 6
+  entity like me: 7
+  entity like me: 7
+  entity like me: 8
+  entity like me: 8 }
+func print(x : int;): null ;
+    log
+        INFO "%ld" x;
+    gol
+cnuf
+func b(): null ;
+    log
+        INFO "hit1" ;
+    gol
+    print(likeme.ID()) ;
+    id : int ;
+    id = likeme ;
+    log
+        INFO "hit2" ;
+    gol
+    print(id) ;
+cnuf
+{ first proposal 
+  prints:
+  hit1
+  6
+  7
+  8
+  hit2
+  6
+  hit2
+  7
+  hit2
+  8
+  here, the first likeme is passed as a list to print while id is local
+  starting from its assignation }
+{ second proposal
+  runs the entire func b() for each likeme, so prints
+  hit1 6 hit2 6 hit1 7 hit2 7 hit1 8 hit2 8 }
+{ third proposal
+  coroutine block begins when a listy variable is used and ends with a
+  break ; }
+func c(): null ;
+    e : entity ;
+    e = likeme ;
+    call1(e) ;
+    break ;
+    call2(e) ;
+    call3() ;
+    break ;
+    call4() ;
+cnuf
+{ runs in this order: (for 3 entities)
+  call1(6) call1(7) call1(8) call2(6) call3() call2(7) call3() call2(8)
+  call3() call4() }
 
 bool = int -> int != 0
 int = bool -> promote
@@ -18,6 +92,26 @@ path = entity -> path/to/entity/resource
 ref = entity -> okay, entity is a ref
 entity = ref -> okay, entity is a ref
 -- same for any other non-built-in types
+
+ref = path -> load said resource
+path = ref -> get path of resource
+e.g.
+{ should log "resources/a.res" twice }
+func a(): null
+    myResource : "resources/a.res" ;
+    myPath : string ;
+    myRef : ref ;
+    myPath = myResource ;
+    log
+        INFO "the path of the resource is %s" myPath ;
+    gol
+
+    myRef = myResource ;
+    myPath = myRef ;
+    log
+        INFO "the path of the resource is %s" myPath ;
+    gol
+cnuf
 
 point = string -> parse string for format (%f,%f)
 string = point -> "%f,%f" point.X, point.Y

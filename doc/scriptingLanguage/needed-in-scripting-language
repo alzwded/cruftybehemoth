@@ -260,3 +260,38 @@ func caller(): null ;
         INFO "%d" for(this.inc2) ;
     gol
 cnuf
+
+{ breaking }
+func cool(): null
+    sum : int ;
+    if(Distance(other) < 5) { block extent is until fi }
+        i : int ;
+        i = for(inc2) ;
+        loop(i < 7) { block etent is this if }
+            e : entity ;
+            e = i ; { block extent is this loop }
+            if(Distance(e) < 5)
+                sum = sum + 1 ;
+                if(sum > 3)
+                    break other ;
+                elsif(sum > 2)
+                    break i ;
+                fi
+            fi
+            break ; { breaks e (this loop), so continues i = for(inc2)}
+        pool
+    fi
+    if(sum <= 3)
+        e : entity ;
+        e = this.otherSources() ; { extent is this if }
+        if(this.IsDumb(e))
+            sum = sum + 1 ;
+            if(sum > 3)
+                break this.otherSources ; { breaks this if, goes to logging }
+            fi
+        fi
+    fi
+    log
+        INFO "I'm done!"
+    gol
+cnuf
