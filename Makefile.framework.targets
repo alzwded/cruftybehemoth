@@ -58,14 +58,22 @@ lib/libcruftybehemoth.so: $(FRAMEWORKOBJ)
 	mkdir -p lib
 	$(CC) -shared $(LDFLAGS) -o lib/libcruftybehemoth.so $(FRAMEWORKOBJ)
 
+-include $(FRAMEWORKOBJ:.o=.d)
+
 obj/framework/core/%.o: src/framework/core/%.cpp
 	mkdir -p obj/framework/core
+	$(MAKEDEPEND) $(INCLUDES) $< > $(@:.o=.d)
+	$(HACK_FIXDEPEND)
 	$(CC) $(CFLAGS) -o $@ $<
 obj/framework/debug/%.o: src/framework/debug/%.cpp
 	mkdir -p obj/framework/debug
+	$(MAKEDEPEND) $(INCLUDES) $< > $(@:.o=.d)
+	$(HACK_FIXDEPEND)
 	$(CC) $(CFLAGS) -o $@ $<
 obj/framework/geom/%.o: src/framework/geom/%.cpp
 	mkdir -p obj/framework/geom
+	$(MAKEDEPEND) $(INCLUDES) $< > $(@:.o=.d)
+	$(HACK_FIXDEPEND)
 	$(CC) $(CFLAGS) -o $@ $<
 
 clean:

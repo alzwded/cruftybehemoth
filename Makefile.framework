@@ -1,15 +1,31 @@
 VERSION = \"`cat version`\"
 CC = g++
-CFLAGS = -I./src -I./src/framework -g -fPIC -c -DCORE_VERSION=$(VERSION)
-LDFLAGS = -L./lib -g -Wl,-rpath-link=../lib,-rpath=../lib,--no-as-needed
+INCLUDES = -I./src -I./src/framework -I./include
+# NOTE gtk and other shenanigans are left out on purpose because it's highly
+# unlikely stuff in /usr/src or /usr/include will change unless you're
+# developing there in the first place
+CFLAGS = $(INCLUDES) -g -fPIC -c -DCORE_VERSION=$(VERSION)
 
+LDFLAGS = -L./lib -g -Wl,-rpath-link=../lib,-rpath=../lib,--no-as-needed
 #note on ubuntu -- gcc only likes the first -Wl, despite what is said in the article hereunder. Don't use more than one -Wl parameter with gcc 4.6.1
 
-#TODO figure out how to link libdemo.so with --as-needed because otherwise it refuses to link the static initializer
+MAKEDEPEND = g++ -MM
+HACK_FIXDEPEND = sed -r -i $(@:.o=.d) -e 's.*:$@:'
+# GRRRRRR make is so broken
+# gxx strips preceding directories of the input file resulting in broken rules
+# this hack (which is found in a much, much more convoluted form on the
+# internet) replaces the target string with the full path to the .o file
+# it has a single bug if the path to the .o file contains the non-printable character "" (which is highly unlikely on any sane system)
+# if this is a problem for you, replace the separator above with some other non-printable character that does NOT appear in your path :-)
+
+
+
+#todo figure out how to link libdemo.so with --as-needed because otherwise it refuses to link the static initializer
 #nevermind -- from gentoo.org/proj/en/qa/asneeded.xml
 #Initializers and Deconstructors
 #
 #There exists a class of applications at the moment that break when using --as-needed. These applications are not at fault, but rather the linker itself. The linker is unable to detect dependencies between the initializers and deconstructors (.init/.fini ELF sections) when working with C++ code. As such, it may discard libraries when none of the symbols are used from it, thus mistakenly changing the initialization and deconstruction code paths.
 #
 #While this class of applications is small and there are no known applications yet which fall into this category, this is something to keep in mind. The only way to really detect such a thing is by proper source code and runtime analysis.
-# woopty doo-dah, this falls into that category (although it SHOULD NOT fall into this category -- TODO figure out how to get the static initializers working with --as-needed
+# woopty doo-dah, this falls into that category (although it SHOULD NOT fall into this category -- todo figure out how to get the static initializers working with --as-needed -- impossible for now
+

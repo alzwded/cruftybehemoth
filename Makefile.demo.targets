@@ -9,8 +9,12 @@ lib/libdemo.so: $(DEMOOBJS)
 	mkdir -p lib
 	$(CC) -shared $(LDFLAGS) -o lib/libdemo.so $(DEMOOBJS) `pkg-config --libs gdk-pixbuf-2.0 gtk+-2.0` -lcruftybehemoth
 
+-include $(DEMOOBJS:.o=.d)
+
 obj/demo/%.o: src/demo/%.cpp
 	mkdir -p obj/demo
+	$(MAKEDEPEND) $(INCLUDES) $< > $(@:.o=.d)
+	$(HACK_FIXDEPEND)
 	$(CC) $(CFLAGS) `pkg-config --cflags gdk-pixbuf-2.0 gtk+-2.0` -o $@ $<
 
 demo-res: src/demo/resources src/demo/data
