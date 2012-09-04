@@ -1,0 +1,93 @@
+*something* = *something* --> straight assignation
+int = float -> trunc(float)
+float = int -> promote
+
+int = entity -> entity.ID()
+entity = int -> find(p => entity.ID() == int)
+
+bool = int -> int != 0
+int = bool -> promote
+
+string = int -> itoa(int, 10)
+int = string -> atoi(string)
+
+entity = path -> NO
+path = entity -> path/to/entity/resource
+-- idem strings
+
+ref = entity -> okay, entity is a ref
+entity = ref -> okay, entity is a ref
+-- same for any other non-built-in types
+
+point = string -> parse string for format (%f,%f)
+string = point -> "%f,%f" point.X, point.Y
+
+lambda = !lambda -> NO
+
+x = list -> foreach i in list, x = i, do rest of block
+            any other reference of list in the block is the same as this one
+list = x -> NO
+
+list = list + x -> foreach i in list, i = i + x
+x = x + list -> foreach i in list, x = x + i, continue block
+
+struct Instruction {
+    typedef enum { NULL, INT, FLOAT, BOOL, STRING, ENTITY, POINT, REGION, LIST, REF, PATH, LAMBDA } instruction_t;
+    typedef union {
+        int int_;
+        float float_;
+        bool bool_;
+        string string_;
+        Core::Entity* entity_;
+        Geom::Point& point_;
+        Geom::Region& region_;
+        void* ref_;
+    } return_t;
+
+    instruction_t return_type_;
+    list<return_t> return_val_;
+    list<return_t>::iterator current_val_;
+    list<Instruction> block_;
+    Instruction* caller_;
+    string ident_;
+    map<string, Instruction*> variables_;
+    //Instruction& operator=(const Instruction&); // do as described above
+    Instruction& operator++() { ++current_val_; return *this; }
+    Instruction& operator++(int) { ++current_val_; return *this; }
+
+    bool HasMore() const
+    {
+        return /*return_val_.size() > 1 &&*/
+               current_val_ != return_val_.end();
+    }
+    bool IsNull() const
+    {
+        return return_type_ != NULL
+            || return_val_.empty();
+    }
+    bool IsList() const {
+        return return_type_ == LIST
+            || return_val_.size() > 1;
+    }
+
+    virtual void Execute(
+        bool _listContext,
+        map<string, Instruction*> _contextVariables&)
+        {}
+};
+
+example: // fake, drop
+struct Assignation {
+    Execute(...)
+    {
+        if(IsList()): do something else
+        if(_listContext):
+            return_val_[0] = *block_[0].current_val_;
+        else:
+            block_[0].Execute();
+            if block_[0].IsList():
+                caller_->IAmYielded(this);
+            else:
+                return_val_ = block_[0].return_val_;
+    }
+};
