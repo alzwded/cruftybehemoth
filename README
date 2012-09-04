@@ -8,7 +8,7 @@ Provides resource management and main loop.
 You just need to implement a couple of interfaces and drop raw data in and you need not worry about the boring parts when developing a game.
 
 == 2. Building ==
-Do a make to build the demo. Do a make framework-lib to generate libframework.so in ./lib.
+Do a make to build the demo. Do a make framework-dist to generate libcruftybehemoth.so and headers in dist/
 
 == 3. Roadmap ==
 0.1-0.4: various demo releases which help stablize the framework. You should see more and more things added to the demos that show which features are becoming stable. Basically, if something's not in a demo, it means it most likely doesn't work and will be changed in the near future.
@@ -23,7 +23,7 @@ Do a make to build the demo. Do a make framework-lib to generate libframework.so
 2.5: add physics to core. Again, this might break compatibility with the resource files, but this will be taken into account for the 2.0 release. 2.0 will be forwards-compatible. If something will have been overlooked for the 2.5 release, then 2.5 will at least be backwards compatible and provide some form of compatibility mode, but let's hope the design and planning are done by 2.0 and we know what we're doing.
 
 == 4. TODO ==
-* documentation
+see TODO
 
 == 5. Dependencies ==
 * the demo depends on gtk+-2.0
@@ -31,4 +31,5 @@ Do a make to build the demo. Do a make framework-lib to generate libframework.so
 == 6. Documentation ==
 * doc/resources-format              contains information about the format
                                     of various res files
+* doc/scriptingLanguage/*           specification for scripting language
 

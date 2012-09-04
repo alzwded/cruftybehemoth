@@ -26,6 +26,10 @@
 019 * [high] add ScriptedEntity as the base class for Entity defined through the scripting language
 020 * [high] add ScriptedScreen, idem
 
+::BUILD::
+027 * rewrite Makefiles to make incremental builds possible
+028 * get rid of make, it sucks, use something more intelligent
+029 * win32 build, visual studio project
 
 ::RES::
     * low priority
