@@ -50,7 +50,7 @@ framework-dist: framework-lib
 	cp src/framework/debug/*.h dist/inc/debug/
 	tar cvjf dist/cruftybehemoth-`cat version`.tbz -Cdist/ --exclude=*.tbz .
 
-framework-lib: framework
+framework-lib: $(FRAMEWORKOBJ)
 	mkdir -p lib
 	$(CC) -shared $(LDFLAGS) -o lib/libcruftybehemoth.so $(FRAMEWORKOBJ)
 
