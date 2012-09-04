@@ -1,0 +1,6 @@
+DEMORESOURCES = bin/data/test.png \
+	bin/data/entity-1 \
+	bin/resources \
+	bin/data/levels/demo-level-1/demo-level-1 \
+	bin/data/levels/demo-level-1/foreground-1 \
+	bin/data/levels/demo-level-1/background-1

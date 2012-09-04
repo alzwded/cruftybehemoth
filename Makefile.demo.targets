@@ -17,10 +17,9 @@ obj/demo/%.o: src/demo/%.cpp
 	$(HACK_FIXDEPEND)
 	$(CC) $(CFLAGS) `pkg-config --cflags gdk-pixbuf-2.0 gtk+-2.0` -o $@ $<
 
-demo-res: src/demo/resources src/demo/data
-	mkdir -p bin
-	tar cv -C src/demo/ resources data/ | tar xv -C bin/
+.PHONY: demo-res
+demo-res: $(DEMORESOURCES)
 
-src/demo/data: src/demo/data/test.png src/demo/data/entity-1 src/demo/data/levels
-src/demo/data/levels: src/demo/data/levels/demo-level-1
-src/demo/data/levels/demo-level-1: src/demo/data/levels/demo-level-1/demo-level-1 src/demo/data/levels/demo-level-1/background-1 src/demo/data/levels/demo-level-1/foreground-1
+$(DEMORESOURCES): $(patsubst bin/%,src/demo/%,$(DEMORESOURCES))
+	mkdir -p bin
+	tar cv -C src/demo/ $(patsubst bin/%,%,$(DEMORESOURCES)) | tar xv -C bin/
