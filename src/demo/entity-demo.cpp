@@ -1,7 +1,8 @@
 #include <demo/entity-demo.h>
+#include <core/level.h>
 
 //========== Entity_Demo::Loop
-void Demo::Entity_Demo::Loop(const Core::Environment& _e)
+void Demo::Entity_Demo::Loop(const Core::Level& _e)
 {
     if(accelerating_) {
         if(GetVelocity().X() > 0.f) {

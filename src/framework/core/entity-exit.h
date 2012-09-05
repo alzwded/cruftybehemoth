@@ -78,7 +78,7 @@ public:
         return *hb_;
     }
     //========== Entity_Exit::Loop
-    virtual void Loop(const Environment& _E) { return; }
+    virtual void Loop(const Level& _L) { return; }
 private:
     //========== Entity_Exit:: private fields
     Environment& environment_;

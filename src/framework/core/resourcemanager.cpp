@@ -1,4 +1,5 @@
 #include <core/resourcemanager.h>
+#include <core/level.h>
 #include <assert.h>
 #include <fstream>
 #include <iostream>
@@ -40,7 +41,7 @@ bool Core::ResourceManager::Load()
 
             D123_LOGLINE(D123::INFO, "RID = %ld", newID);
 
-            Resource* res = i->second(path, this);
+            Resource* res = i->second(newID, path, this);
             assert(res);
 
 
@@ -76,7 +77,7 @@ void Core::ResourceManager::Unload()
     {
         D123_LOG(D123::TRACE, "deleting resource %ld", i->first);
         assert(i->second);
-        i->second->Release(); // TODO should check if loaded? neah
+        if(i->second->Loaded()) i->second->Release(); // TODO should check if loaded? neah
         delete i->second;
     }
     keys_.clear();
@@ -150,6 +151,7 @@ void Core::ResourceManager::Release(const unsigned long _resourceID)
     if((i = resources_.find(_resourceID)) != resources_.end()) {
         assert(i->second);
         if(i->second->Loaded()) {
+            //blackList_.push_back(i->first); // TODO
             i->second->Release();
         }
     } else {
@@ -172,10 +174,34 @@ Core::Level* Core::LevelLoader::GetLevel(const int _i)
         throw "out of range";
     }
     if(!levels_[_i].second) levels_[_i].second = _ResourceManager()->GetRID(levels_[_i].first);
-    return static_cast<Level*>(_ResourceManager()->Get(levels_[_i].second));
+    Core::Level* lvl = static_cast<Level*>(_ResourceManager()->Get(levels_[_i].second));
+    lvl->number_ = _i;
+    return lvl;
 }
 //========== Resource::Resource
-Core::Resource::Resource(const std::string& _path, Core::ResourceManager* _rm)
+Core::Resource::Resource(const unsigned long _rid, const std::string& _path, Core::ResourceManager* _rm)
     : path_(_path)
     , rm_(_rm)
+    , sp_(_rid, _rm)
     {}
+
+//========== Resource::Sp::Get
+void* Core::Resource::Sp::Get()
+{
+    if(!rc_) {
+        data_ = god_->Get(rid_);
+        rc_ = new int(1);
+    } else {
+        return data_;
+    }
+}
+
+//========== Resource::Sp::Get
+void Core::Resource::Sp::Drop()
+{
+    if(rc_ && (--*rc_ == 0)) {
+        delete rc_;
+        god_->Release(rid_);
+        data_ = NULL;
+    }
+}

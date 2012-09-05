@@ -17,6 +17,7 @@ class Environment;
 class DisplayAdapter;
 class EntitySpawner;
 class Game; // TODO maybe it should not be the one to call OnCollision
+class Level;
 
 //---------- Core::Entity
 class Entity {
@@ -29,7 +30,7 @@ public:
     virtual ~Entity() {}
     //========== Entity::Loop
     // AI loop
-    virtual void Loop(const Environment&) =0;
+    virtual void Loop(const Core::Level&) =0;
     //========== Entity::HitBox
     virtual const Geom::Region& HitBox() const =0;
     //========== Entity::IsHitBoxDamaging

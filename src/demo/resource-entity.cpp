@@ -5,9 +5,9 @@
 Demo::Resource_Entity::Initializer Demo::Resource_Entity::__init__;
 
 //========== Resource_Entity::New
-Core::Resource* Demo::Resource_Entity::New(const std::string& _s, Core::ResourceManager* _rm)
+Core::Resource* Demo::Resource_Entity::New(const unsigned long _rid, const std::string& _s, Core::ResourceManager* _rm)
 {
-    return new Demo::Resource_Entity(_s, _rm);
+    return new Demo::Resource_Entity(_rid, _s, _rm);
 }
 
 //========== Resource_Entity::_Load
@@ -42,6 +42,6 @@ Core::Entity* Demo::EntitySpawner::Spawn(const Geom::Point& _p)
 }
 
 //========== Resource_Entity::Resource_Entity
-Demo::Resource_Entity::Resource_Entity(const std::string& _s, Core::ResourceManager* _rm)
-    : ::Core::Resource_Entity(_s, _rm)
+Demo::Resource_Entity::Resource_Entity(const unsigned long _rid, const std::string& _s, Core::ResourceManager* _rm)
+    : ::Core::Resource_Entity(_rid, _s, _rm)
     {}

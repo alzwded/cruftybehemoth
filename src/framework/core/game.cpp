@@ -30,6 +30,22 @@ int Core::Game::Main(int argc, char* argv[])
     return 0;
 }
 
+//========== Game::UpdateLevel
+void Core::Game::UpdateLevel(Core::Level*& _currentLevel)
+{
+    if(!_currentLevel) return;
+    if(_currentLevel->Next() && _currentLevel->End()) {
+        int old = _currentLevel->GetNumber();
+        _currentLevel = _currentLevel->Next();
+        _LevelLoader().DropLevel(old);
+    } else if(!_currentLevel->Next() && _currentLevel->End()) {
+        /* exit! */
+        /*int old = _currentLevel->GetNumber();
+        _currentLevel = _LevelLoader().GetLevel(0);
+        _LevelLoader().DropLevel(old);*/
+    }
+}
+
 //========== Game::MainLoop
 inline void Core::Game::MainLoop()
 {
@@ -47,7 +63,7 @@ inline void Core::Game::MainLoop()
         // entity decides where it wants to go
         for(i = entities.begin(); i != entities.end(); ++i) {
             if(lvl->AllowEntityToLoop(*i)) {
-                (*i)->Loop(lvl->GetEnvironment());
+                (*i)->Loop(*lvl);
             }
         }
         // entity is told it collides with other stuff
@@ -83,6 +99,8 @@ inline void Core::Game::MainLoop()
         if(display_) {
             display_->Render(screens, resources_);
         } else {}
+
+        UpdateLevel(lvl);
 
         Sleep();
     } while(lvl && !lvl->End());

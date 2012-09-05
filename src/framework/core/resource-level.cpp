@@ -9,11 +9,12 @@ Core::Resource_Level::Initializer Core::Resource_Level::__init__;
 
 //========== Resource_Level::New
 Core::Resource* Core::Resource_Level::New(
+        const unsigned long _rid,
         const std::string& _path,
         Core::ResourceManager* _rm)
 {
     _rm->_LevelLoader().PushLevel(_path);
-    return new Resource_Level(_path, _rm);
+    return new Resource_Level(_rid, _path, _rm);
 }
 
 //========== Resource_Level::Load
@@ -83,5 +84,8 @@ void Core::Resource_Level::Load()
 //========== Resource_Level::Release
 void Core::Resource_Level::Release()
 {
-    if(lvl_) delete lvl_;
+    if(lvl_) {
+        delete lvl_;
+        lvl_ = NULL;
+    }
 }

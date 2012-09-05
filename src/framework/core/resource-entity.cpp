@@ -40,8 +40,8 @@ void Core::Resource_Entity::Load()
 }
 
 //========== Resource_Entity::Resource_Entity
-Core::Resource_Entity::Resource_Entity(const std::string& _path, Core::ResourceManager* _rm)
-    : ::Core::Resource(_path, _rm)
+Core::Resource_Entity::Resource_Entity(const unsigned long _rid, const std::string& _path, Core::ResourceManager* _rm)
+    : ::Core::Resource(_rid, _path, _rm)
     , es_(NULL)
     {}
 

@@ -5,6 +5,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <queue>
 #include <utility>
 #include <assert.h>
 #include <cstddef>
@@ -36,8 +37,6 @@ public:
     {
         levels_.push_back(std::pair<std::string, unsigned long>(_path, 0));
     }
-    ////========== LevelLoader::GetMainEntity
-    //Entity* GetMainEntity() { static Entity* p; return p; }
     //========== LevelLoader::ResourceManager
     ResourceManager* _ResourceManager() { return rm_; }
 private:
@@ -48,8 +47,51 @@ private:
 //---------- Core::Resource
 class Resource {
 protected:
+    //========== Resource:: typedefs
+    class Sp {
+    public:
+        Sp(const int _rid, ResourceManager* _god)
+            : rid_(_rid)
+            , god_(_god)
+            , rc_(NULL)
+            , data_(NULL)
+            {}
+        Sp(const Sp& _other) { Copy(_other); }
+        void* operator->() { return Get(); }
+        void* operator*() { return Get(); }
+        bool operator!() { return !rc_; }
+        Sp& operator=(const Sp& _other)
+        {
+            Drop();
+            Copy(_other);
+            return *this;
+        }
+        ~Sp() { Drop(); }
+    protected:
+        void* Get();
+        template<class T>
+        T* GetAs() { return static_cast<T*>(Get()); }
+        void Drop();
+        void Copy(const Sp& _other)
+        {
+            rid_ = _other.rid_;
+            rc_ = _other.rc_;
+            data_ = _other.data_;
+            god_ = _other.god_;
+            ++*rc_;
+        }
+    private:
+        int rid_;
+        int* rc_;
+        void* data_;
+        ResourceManager* god_;
+
+        friend class Core::ResourceManager;
+        friend class Core::Resource;
+    };
+protected:
     //========== Resrouce::Resource
-    Resource(const std::string& _path, ResourceManager* _rm);
+    Resource(const unsigned long _rid, const std::string& _path, ResourceManager* _rm);
 public:
     //========== Resrouce::~Resource
     virtual ~Resource() {}
@@ -64,9 +106,16 @@ public:
     //========== Resrouce::Release
     virtual void Release() =0;
     //========== Resrouce::Get
+    // TODO rename to _Get
     virtual void* Get() =0;
     //========== Resrouce::Loaded
     virtual bool Loaded() =0;
+    //========== Resrouce::ManagedGet
+    // TODO rename to Get
+    Sp ManagedGet()
+    {
+        return sp_;
+    }
 
 protected:
     //========== Resrouce::SetPath
@@ -82,13 +131,14 @@ private:
     //========== Resrouce:: private fields
     std::string path_;
     ResourceManager* rm_;
+    Sp sp_;
 
     //========== Resrouce:: friends
     friend class Core::ResourceManager;
 };
 
 //---------- ResourceManager:: typedefs
-typedef Resource* (*Resource_cstr)(const std::string&, Core::ResourceManager*);
+typedef Resource* (*Resource_cstr)(const unsigned long, const std::string&, Core::ResourceManager*);
 
 //---------- Core::ResourceManager
 class ResourceManager {
@@ -118,12 +168,34 @@ public:
     void Release(const unsigned long _resourceID);
     //========== ResourceManager::LevelLoader
     LevelLoader& _LevelLoader() { return levels_; }
+    //========== ResourceManager::Gc
+    void Gc(unsigned long _time)
+    {
+        while(!blackList_.empty() && _time > 1000)
+        {
+            // begin timing
+            std::map<unsigned long, Resource*>::iterator i;
+            int resourceId = blackList_.front();
+            if((i = resources_.find(resourceId)) != resources_.end()) {
+                assert(i->second);
+                if(i->second->Loaded() && !(i->second->sp_.rc_))
+                {
+                    i->second->Release();
+                }
+            }
+            blackList_.pop();
+        }
+        // end timing
+        // time -= timing
+        // adjust how much to balete depending on time leftiness
+    }
 private:
     //========== ResourceManager:: private members
     std::set<unsigned long> keys_;
     std::map<unsigned long, Resource*> resources_;
     std::map<std::string, unsigned long> pathIDs_;
     std::string path_;
+    std::queue<unsigned long> blackList_;
     LevelLoader levels_;
 };
 

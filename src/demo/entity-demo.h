@@ -27,7 +27,7 @@ public:
         D123_LOG(D123::INFO, "Entity %ld: Tell my family how I died!", ID());
     }
     //========== Entity_Demo::Loop
-    virtual void Loop(const Core::Environment&);
+    virtual void Loop(const Core::Level&);
     //========== Entity_Demo::HitBox
     virtual const Geom::Region& HitBox() const;
     //========== Entity_Demo::IsHitBoxDamaging

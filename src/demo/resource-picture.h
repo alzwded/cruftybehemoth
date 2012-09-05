@@ -16,9 +16,10 @@ class Resource_Picture
 protected:
     //========== Resource_Picture::Resource_Picture
     Resource_Picture(
+            const unsigned long _rid,
             const std::string& _path,
             Core::ResourceManager* _rm)
-        : Resource(_path, _rm)
+        : Resource(_rid, _path, _rm)
         , data_(NULL)
     {}
 public:
@@ -38,7 +39,7 @@ public:
         return data_;
     }
     //========== Resource_Picture::New
-    static Resource* New(const std::string& _path, Core::ResourceManager* _rm);
+    static Resource* New(const unsigned long, const std::string& _path, Core::ResourceManager* _rm);
 
 private:
     //========== Resource_Picture:: private fields

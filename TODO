@@ -6,6 +6,8 @@
 005 * for that matter, define a Entity_PC interface/abstract class
 006 * decide on BlockBundle implementation to account for animations, location_, have it be abstract enough to allow the implementation of any DisplayAdapter
 007 * add support for a scripting language (think Lua, but I might implement my own, or generate interfaces for any scripting language) so that it will not be necessary to code in c++
+== Resource Management == 
+030 * see doc/resourceManagement
 == Garbage Collection ==
 008 * Add ref count on Resource
 009 * Run garbage collector after AI loop and display rendering and whatnot until frame time is close to running out (i.e. only clear some resources in the 17/34 miliseconds)

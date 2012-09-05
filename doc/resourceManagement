@@ -1,0 +1,104 @@
+== On Resource Management ==
+
+ResourceManager is god. It tells which resource leaves and dies. It uses
+its all-mighty garbage collector to kill stuff off. It does not care
+who is supposed to be persistent or transient, only reference counting.
+
+Resources are reference counted. If the RC reaches 0, the all-mighty
+ResourceManager's garbage collector kills it (when it has time to do this).
+
+But the ResourceManager can only be comunicated to via ritual. The priest
+leading the ritual is Game. It leaves those who pass through life
+transiently so be managed by the people. But those who need to survive
+through levels of Ice and Lava have a special place in Game's temple.
+
+Therefore, those persistent through our world shall have their reference
+permanently scribbled in a special place in Game's temple, known as the
+list of all persistent. But when dark times come and one is to fall out of
+grace with the temple of persistency, their name will be thus erased from
+the list of all persistent and have their faith be decided by the
+environment, and finally be garbage collected.
+
+== In Other Words ==
+
+Resources are ref counted. ResourceManager has a Garbage Collector that runs
+after every loop in the short time until the next frame. Resource'd data
+is not handled through references of bare pointers or anything, but rather
+through a variation of SmartPointer that comunicates to the Resource that
+spawned it that it died. This decreases the ref count of the resource.
+
+When the Resource's ref count reaches 0, it's at the mercy of the Garbage
+Collector, unless someone saves it by spawning something from it again.
+
+When I say Resource, I mean one instance of a certain Core::Resource.
+
+The data is what's returned by Resource::Get. This is a smart pointer. The
+ref count depends on the Resource's ref count.
+
+EntitySpawner is a special thing. Each entity spawner is pretty much the one
+Resource instance. So when doing a Spawn, it returns a smarter pointer p and
+increases the ref count of the entityspawner / resource. When p's RC reaches
+0, it recreases the resource's RC by one. When the Resource's RC reaches 0,
+it works as above.
+
+== Details ==
+
+// internal to Resource
+// publicly instantiated to what it returns
+template<class T>
+struct sp {
+    sp(const int _RID, const ResourceManager* god)
+        : RID(_RID)
+        , rm_(god)
+        , rc(0)
+        , master(NULL)
+        {}
+    T* get() {
+        if(master) {
+            return static_cast<T*>(master->Get());
+        } else {
+            rc = new int(1);
+            master = rm_->Get(RID);
+            return static_cast<T*>(master->Get());
+        }
+    }
+    operator = { rc = other.rc; master = other.master; RID = other.RID; ++*rc; }
+    copy constructor { idem }
+    ~sp() { if(--*rc == 0)
+    {
+        if(master) {
+            delete rc;
+            rm_->Condemn(master);
+            // or
+            master->Suicide();
+            // or
+            master->Release(); // to begin with
+            // or
+            rm_->Release(master); // idem
+            // or
+            master->rc_--;
+            master = NULL;
+        }
+    }
+    bool operator!()
+    {
+        return master != NULL;
+    }
+protected:
+    int* rc;
+    int RID;
+    Resource* master;
+    const ResourceManager* rm_;
+};
+
+public:
+    typedef template<>
+    sp<Entity> sp;
+
+Resource::Get transforms into, e.g.
+Resource_Level::sp Get() {
+    if(!this->sp_.) {
+        Resource_Level::sp ret(static_cast<Level*>(OldGet()));
+    }
+    return sp_;
+}

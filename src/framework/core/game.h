@@ -61,6 +61,14 @@ private:
     void HandleParameters(int argc, char* argv[]);
     //========== Game::GetHelp
     std::string GetHelp();
+protected:
+    //========== Game::UpdateLevel
+    // maybe it was triggered the next level maybe?
+    // disable everything from moving and fade out?
+    // spawn coin enemies because time ran out in bomberman?
+    // to do these things and more, do them here
+    virtual void UpdateLevel(Core::Level*& _currentLevel);
+public:
     //========== Game::Sleep
     void Sleep();
     //========== Game::LevelLoader

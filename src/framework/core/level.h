@@ -16,7 +16,7 @@ class Level;
 class __entity : public virtual Core::Entity {
     __entity() : hb_(Geom::Point(0, 0), 0, 0) {}
 public:
-    virtual void Loop(const Core::Environment&) {}
+    virtual void Loop(const Core::Level&) {}
     virtual bool IsA(const unsigned long _clssid) { return false; }
     virtual const Geom::Region& HitBox() const { return hb_; }
     virtual bool IsHitBoxDamaging() const { return false; }
@@ -41,17 +41,24 @@ public:
         ret->env_.lvl_ = ret;
         return ret;
     }
+    //========== Level::GetNumber
+    int GetNumber() const { return number_; }
     //========== Level::GetEnvironment
     Environment& GetEnvironment() { return env_; }
     //========== Level::AllowEntityToLoop
     bool AllowEntityToLoop(Entity*) { return true; }
     //========== Level::GetMainEntity
     Entity* GetMainEntity() { static Entity* e = new __entity(); return e; }
+    //========== Level::GetExits
+    const Core::EntityList& GetExits() const { static Core::EntityList ret; return ret; }
+    //========== Level::Next
+    Core::Level* Next() const { return NULL; }
     //========== Level::End
     bool End() { return true; }
 private:
     //========== Level:: private fields
     Environment env_;
+    int number_;
 
     //========== Level:: friends
     friend class Core::LevelLoader;

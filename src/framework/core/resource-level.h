@@ -16,9 +16,10 @@ class Resource_Level
 public:
     //========== Resource_Level::Resource_Level
     Resource_Level(
+            const unsigned long _rid,
             const std::string& _path,
             Core::ResourceManager* _rm)
-        : Resource(_path, _rm)
+        : Resource(_rid, _path, _rm)
         , lvl_(NULL)
         {}
     //========== Resource_Level::CLSSID
@@ -42,7 +43,7 @@ public:
     // TODO move this to abstract class
     virtual void* Get() { return lvl_; }
     //========== Resource_Level::New
-    static Resource* New(const std::string& _path, Core::ResourceManager* _rm);
+    static Resource* New(const unsigned long, const std::string& _path, Core::ResourceManager* _rm);
 private:
     //========== Resource_Level:: private fields
     // TODO move this to abstract class as void* data_;

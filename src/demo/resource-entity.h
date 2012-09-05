@@ -41,6 +41,7 @@ class Resource_Entity
 public:
     //========== Resource_Entity::Resource_Entity
     Resource_Entity(
+            const unsigned long _rid,
             const std::string& _s, 
             Core::ResourceManager* _rm);
     //========== Resource_Entity::CLSSID
@@ -60,7 +61,7 @@ public:
     //========== Resource_Entity::_Load
     virtual void _Load(FILE*, Core::EntitySpawner*);
     //========== Resource_Entity::New
-    static Core::Resource* New(const std::string& _s, Core::ResourceManager* _rm);
+    static Core::Resource* New(const unsigned long _rid, const std::string& _s, Core::ResourceManager* _rm);
 private:
     //========== Resource_Entity:: static initializer
     struct Initializer {

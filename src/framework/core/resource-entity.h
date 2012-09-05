@@ -18,6 +18,7 @@ class Resource_Entity
 protected:
     //========== Resrouce_Entity::Resrouce_Entity
     Resource_Entity(
+            const unsigned long,
             const std::string& _path,
             Core::ResourceManager* _rm);
 public:
