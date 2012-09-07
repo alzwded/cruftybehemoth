@@ -4,7 +4,7 @@
 #include <core/resourcemanager.h>
 #include <core/level.h>
 #include <core/inputadapter.h>
-#include <time.h>
+#include <core/time.h>
 #include <string>
 #include <cstddef>
 
@@ -79,8 +79,8 @@ public:
     //LevelLoader levels_;
     DisplayAdapter* display_;
     InputAdapter* input_;
-    clock_t frameBegin_;
-    int frameSpeed_;
+    Core::Time::core_time_t frameBegin_;
+    long frameSpeed_;
 };
 
 } // namespace

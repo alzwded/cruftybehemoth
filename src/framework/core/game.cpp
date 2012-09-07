@@ -55,7 +55,7 @@ inline void Core::Game::MainLoop()
     Core::Level* lvl = _LevelLoader().GetLevel(0);
 
     do {
-        frameBegin_ = clock();
+        Core::Time::gettime(frameBegin_);
         Core::Entity* cameraBearingEntity = lvl->GetMainEntity();
         screens = lvl->GetEnvironment().GetScreensFor(*cameraBearingEntity);
         entities = lvl->GetEnvironment().GetEntitiesNear(*cameraBearingEntity);
@@ -94,6 +94,9 @@ inline void Core::Game::MainLoop()
 
         lvl->GetEnvironment().PlaySounds();
 
+        // test
+        _ResourceManager()._LevelLoader().DropLevel(lvl->GetNumber());
+
         _MainLoop(*lvl);
 
         if(display_) {
@@ -109,12 +112,19 @@ inline void Core::Game::MainLoop()
 //========== Game::Sleep
 inline void Core::Game::Sleep()
 {
-    clock_t now = clock();
-    if(now == frameBegin_) {
-        usleep(1000 * frameSpeed_);
-    } else if(now > frameBegin_) {
-        usleep(1000 * frameSpeed_ - (now - frameBegin_));
+    Core::Time::core_time_t now;
+    Core::Time::gettime(now);
+
+    long remaining = Core::Time::remainingMS(frameBegin_, now, frameSpeed_);
+
+    if(remaining > 0) {
+        remaining = _ResourceManager().Collect(remaining);
+        if(remaining > 0) {
+            usleep(1000 * remaining);
+        } else {
+            D123_LOG(D123::WARNING, "overworked garbage collector by %dms", remaining);
+        }
     } else {
-        usleep(1000 * frameSpeed_ - ((~now) + frameBegin_));
+        D123_LOG(D123::WARNING, "overworked main loop by %dms", remaining);
     }
 }

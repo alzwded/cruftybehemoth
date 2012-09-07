@@ -19,7 +19,8 @@ FRAMEWORKOBJ = obj/framework/core/entity.o \
 	obj/framework/core/inputadapter.o \
 	obj/framework/core/game.o \
 	obj/framework/core/resource-level.o \
-	obj/framework/debug/d123.o
+	obj/framework/debug/d123.o \
+	obj/framework/core/time.o
 
 framework-dist: framework-lib
 	mkdir -p dist/inc/core dist/inc/geom dist/inc/debug dist/lib
@@ -31,11 +32,11 @@ framework-dist: framework-lib
 
 framework-lib: $(FRAMEWORKOBJ)
 	mkdir -p lib
-	$(CC) -shared $(LDFLAGS) -o lib/libcruftybehemoth.so $(FRAMEWORKOBJ)
+	$(CC) -shared $(LDFLAGS) -o lib/libcruftybehemoth.so $(FRAMEWORKOBJ) -lrt
 
 lib/libcruftybehemoth.so: $(FRAMEWORKOBJ)
 	mkdir -p lib
-	$(CC) -shared $(LDFLAGS) -o lib/libcruftybehemoth.so $(FRAMEWORKOBJ)
+	$(CC) -shared $(LDFLAGS) -o lib/libcruftybehemoth.so $(FRAMEWORKOBJ) -lrt
 
 -include $(FRAMEWORKOBJ:.o=.d)
 

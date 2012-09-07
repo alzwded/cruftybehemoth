@@ -54,7 +54,7 @@ public:
     //========== Level::Next
     Core::Level* Next() const { return NULL; }
     //========== Level::End
-    bool End() { return true; }
+    bool End() { static int a = 3; --a; if(a <= 0) return true; }
 private:
     //========== Level:: private fields
     Environment env_;

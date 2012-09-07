@@ -75,9 +75,11 @@ void Core::ResourceManager::Unload()
         i != resources_.end();
         ++i)
     {
-        D123_LOG(D123::TRACE, "deleting resource %ld", i->first);
         assert(i->second);
-        if(i->second->Loaded()) i->second->Release(); // TODO should check if loaded? neah
+        D123_LOG(D123::TRACE, "deleting resource %ld which is %s",
+                i->first,
+                i->second->Loaded() ? "loaded" : "unloaded");
+        if(i->second->Loaded()) i->second->Release();
         delete i->second;
     }
     keys_.clear();
@@ -151,12 +153,43 @@ void Core::ResourceManager::Release(const unsigned long _resourceID)
     if((i = resources_.find(_resourceID)) != resources_.end()) {
         assert(i->second);
         if(i->second->Loaded()) {
-            //blackList_.push_back(i->first); // TODO
-            i->second->Release();
+            blackList_.push(i->first); // TODO
+            //i->second->Release();
         }
     } else {
         D123_LOG(D123::ERROR, "no resource with RID %ld", _resourceID);
     }
+}
+
+//========== ResourceManager::Collect
+unsigned long Core::ResourceManager::Collect(const unsigned long _time, const bool _force)
+{
+    unsigned long left = _time;
+    while(!blackList_.empty() && (_force || left > CORE_TIME_FRAME_THRESHOLD))
+    {
+        // begin timing
+        Core::Time::core_time_t then;
+        Core::Time::gettime(then);
+
+        std::map<unsigned long, Resource*>::iterator i;
+        int resourceId = blackList_.front();
+        if((i = resources_.find(resourceId)) != resources_.end()) {
+            assert(i->second);
+            if(i->second->Loaded() && !(i->second->sp_.rc_))
+            {
+                D123_LOG(D123::INFO, "Releasing resource %ld with %ld left on the clock", resourceId, left);
+                i->second->Release();
+            }
+        }
+        blackList_.pop();
+
+        // end timing
+        Core::Time::core_time_t now;
+        Core::Time::gettime(now);
+        left = Core::Time::remainingMS(then, now, left);
+        // adjust how much to balete depending on time leftiness
+    }
+    return left;
 }
 
 //========== LevelLoader::DropLevel

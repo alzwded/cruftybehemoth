@@ -1,6 +1,7 @@
 #ifndef CORE_RESOURCEMANAGER_H
 #define CORE_RESOURCEMANAGER_H
 
+#include <core/time.h>
 #include <string>
 #include <map>
 #include <set>
@@ -12,6 +13,8 @@
 
 #define CORE_RESOURCEMANAGER_DEFAULTPATH "./"
 #define CORE_RESOURCEMANAGER_PATHSEPARATOR "/"
+
+#define CORE_TIME_FRAME_THRESHOLD 1 //ms
 
 namespace Core {
 
@@ -46,7 +49,7 @@ private:
 
 //---------- Core::Resource
 class Resource {
-protected:
+public:
     //========== Resource:: typedefs
     class Sp {
     public:
@@ -169,26 +172,7 @@ public:
     //========== ResourceManager::LevelLoader
     LevelLoader& _LevelLoader() { return levels_; }
     //========== ResourceManager::Gc
-    void Gc(unsigned long _time)
-    {
-        while(!blackList_.empty() && _time > 1000)
-        {
-            // begin timing
-            std::map<unsigned long, Resource*>::iterator i;
-            int resourceId = blackList_.front();
-            if((i = resources_.find(resourceId)) != resources_.end()) {
-                assert(i->second);
-                if(i->second->Loaded() && !(i->second->sp_.rc_))
-                {
-                    i->second->Release();
-                }
-            }
-            blackList_.pop();
-        }
-        // end timing
-        // time -= timing
-        // adjust how much to balete depending on time leftiness
-    }
+    unsigned long Collect(const unsigned long _time, const bool _force =false);
 private:
     //========== ResourceManager:: private members
     std::set<unsigned long> keys_;
