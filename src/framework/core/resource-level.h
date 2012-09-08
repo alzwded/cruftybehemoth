@@ -1,6 +1,7 @@
 #ifndef CORE_RESOURCE_LEVEL_H
 #define CORE_RESOURCE_LEVEL_H
 
+#include <core/resource.h>
 #include <core/resourcemanager.h>
 #include <core/level.h>
 #include <debug/d123.h>

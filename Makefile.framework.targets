@@ -20,7 +20,8 @@ FRAMEWORKOBJ = obj/framework/core/entity.o \
 	obj/framework/core/game.o \
 	obj/framework/core/resource-level.o \
 	obj/framework/debug/d123.o \
-	obj/framework/core/time.o
+	obj/framework/core/time.o \
+    obj/framework/core/resource.o
 
 framework-dist: framework-lib
 	mkdir -p dist/inc/core dist/inc/geom dist/inc/debug dist/lib

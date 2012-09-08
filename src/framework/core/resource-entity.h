@@ -1,6 +1,7 @@
 #ifndef CORE_RESOURCE_ENTITY_H
 #define CORE_RESOURCE_ENTITY_H
 
+#include <core/resource.h>
 #include <core/resourcemanager.h>
 #include <core/entityspawner.h>
 #include <cstddef>

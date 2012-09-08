@@ -22,8 +22,9 @@ demo-res: $(DEMORESOURCES)
 
 $(DEMORESOURCES): $(patsubst bin/%,src/demo/%,$(DEMORESOURCES))
 	mkdir -p bin
+	tar c -C src/demo/ $(patsubst bin/%,%,$@) | tar x --keep-newer-files -C bin/
 	@#$(foreach I, $(DEMORESOURCES), \
 	@	#cp -u $(patsubst bin/%,src/demo/%,$I) $I ; \
 	@#)
 	@#cp -u $(patsubst bin/%,src/demo/%,$(DEMORESOURCES)) $(DEMORESOURCES)
-	tar c -C src/demo/ $(patsubst bin/%,%,$(DEMORESOURCES)) | tar x --keep-newer-files -C bin/
+	#tar c -C src/demo/ $(patsubst bin/%,%,$(DEMORESOURCES)) | tar x --keep-newer-files -C bin/
