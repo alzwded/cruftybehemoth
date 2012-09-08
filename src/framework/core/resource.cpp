@@ -19,7 +19,7 @@ void* Core::Resource::Sp::Get()
     }
 }
 
-//========== Resource::Sp::Get
+//========== Resource::Sp::Drop
 void Core::Resource::Sp::Drop()
 {
     if(rc_ && (--*rc_ == 0)) {

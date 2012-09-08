@@ -41,7 +41,7 @@ public:
             rc_ = _other.rc_;
             data_ = _other.data_;
             god_ = _other.god_;
-            ++*rc_;
+            if(rc_) ++*rc_;
         }
     private:
         int rid_;
