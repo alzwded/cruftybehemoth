@@ -75,9 +75,9 @@ public:
     virtual bool Loaded() =0;
     //========== Resrouce::ManagedGet
     // TODO rename to Get
-    Sp ManagedGet()
+    Sp ManagedGet(...)
     {
-        return sp_;
+        return sp_; // no
     }
 
 protected:
