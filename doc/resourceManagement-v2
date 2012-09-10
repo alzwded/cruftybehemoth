@@ -134,3 +134,17 @@ We notice two types of SP's. One is instantiated per call to Resource::Get(...),
 Therefore, let there be one interface Resource as above, and a sub-class adaptor called ConstResource whose Get method returns this->SingleSP, where this SingleSP's RC is directly linked to the Resource's RC.
 
 Have fun trying to figure this out!
+
+== TODOs ==
+
+EntitySpawner disappears, its functionality spliced into Resource_Entity.
+
+LevelLoader disappears.
+
+ResourceManager::Load can have an optional "saveFile" parameter.
+
+Add ResourceManager::Save
+
+Any direct references to Entity or Level or anything will become Resource::SP's and any references to stuff like Background or BlockBundle will become ConstResource::SP.
+
+Finish ResourceManager::GarbageCollector
