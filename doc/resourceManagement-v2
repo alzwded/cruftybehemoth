@@ -1,0 +1,136 @@
+== 2nd draft for Resource Management ==
+
+// skip to {HERE}
+
+Some data from v1 is still valid for this version (the stuff about when the GC should run)
+
+Let there be a ResourceManager [RM].
+
+RM reads the _resources_ file. The format is (c.f. resources-format).
+
+RM builds a map of what it finds.
+
+[Game] requests resource level-0. RM looks into its map and finds level-0. This spawns a Resource-level-0-reader [RR] instance (the only one) that begins reading the file pointed by level-0. Let's call this [F0].
+
+RR loads the file through the Load method. The only guy allowed to call Load and Drop is RM. 
+
+Back to Game, he receives a ref-counted smart pointer intrusive-list'd thing (let's call it [SP]). Basically an SP instance is a particularization realized through the parameters passed to RR->Get(...).
+
+When SP's ref-count reaches 0, it notifies the RR that it should decrease its ref-count by 1.
+
+When RR's ref-count reaches 0, it tells the RM "hey, you can kill me now".
+
+When RM's garbage collector [GC] kicks in, it goes over its blackList_ and does a delete *i. This also removes the *i from RM's list of loaded things.
+
+== Let's go over this again and see if I understood ==
+
+Game:
+    {0}
+    Resource* r = ResourceManager()->Get("demo/level-1"); {1}
+    Level = r->Get(Difficulty::Easy); {2}
+    while(!Level->End())
+        ;
+    {3}
+
+{0}
+ResourceManager::Load:
+    myMapOfResources.insert( "demo/level-1", Registry().find("level")->Spawn(this) );
+
+{1}
+ResourceManager::Get:
+    return myMapOfResources["demo/level-1"];
+
+{2}
+Resource::Get:
+    if(!Loaded()):
+        Load();
+    return SP(SpawnAndParticularizateLevel(_difficulty), this);
+
+{3}
+SP::~SP:
+    if(--rc == 0) {
+        DestroyLevel(data_); {3.bis for other stuff contained here}
+    }
+    dad_->Drop(); {4}
+
+{4}
+Resource::Drop
+    if(--rc == 0) {
+        dad_->AddMeToBlackList(this); {5}
+    }
+
+{5}
+on GC, called by Game after running the main loop then Nth time
+ResourceManager::Collect:
+    foreach i in blackList_:
+        if(i->rc == 0) i->Release();
+        remove(i);
+        if(TooMuchTimeSpentCollecting()) break;
+
+
+
+== On persistant and transient data ==
+
+It is necessary to have some data that lives longer than others. For example, the PC entity. Hence, resources in RM should be kept in two list:
+
+PersistantStorage{"demo/pc/entity" as PC and CurrentPosition, "demo/environment/choices-made-data" as History, "demo/level-1" as CurrentLevel }
+    -- these will be included in the save file
+
+TransientStorage{"demo/level-1", "demo/entities/goomba" xN (used in level-1), "demo/entities/koopa" xN (used in level-1), "demo/backgrounds/uglyHills.jpg" xN (used in level-1)}
+
+By used-in-level-1 I mean that the game does not have a direct link to this. The game only has a link to the level and all the other PersistantStorage.
+
+The idea is that loading only the data in PersistenStorage, one can easily recreate the data in TransientStorage needed to make the setting look like it was left the last time.
+
+Bottom Line: Game does not see TransientStorage. It only sees PersistantStorage. Game cannot randomly drop data from TransientStorage, as it is referenced only in a certain (or rather, certain itemS from PersistantStoraget). It can, however, drop data from PersistantStorage if it's needed (e.g. drop demo/level-1 for demo/level-2, PC data and History remain the same albeit CurrentPosition changes.
+
+More on this to come.
+
+== Interfaces ==
+
+ResourceManager
++ Get("path/to/resource/as/found/in/resources" as string): Resource*
++ Collect(time)
++ Save(file as string) { foreach data in PersistantStorage: data->Serialize() }
++ DropPersistantData(Resource*) { if(Resource->rc-- == 0) Resource->PersistantLink.Break(); }
+- PersistantStorage as SortedIntrusiveList<Resource, PersistantLink, ByPathComparator>, sorted by path
+- TransientStorage as map<path as string, Resource>
+- BlackList as queue<Resource*>
+
+Resource
++ Serialize: stream { foreach i in ListOfInstances: stream << i->GetRelevantData(); }
++ Get(...): SP
+- Load()
+- Drop()
+- Loaded(): bool
+- PersistantLink: IntrusiveLink
+- ListOfInstances: IntrusiveList<SP, ResLink>
+- rc: int**
+
+Resource::SP
++ operator*: void* { return data_; }
++ As<class T>(): T* { return (T*)data_; }
++ ~SP { if --rc == 0: IntrusiveLink->Break(); } // N.B. this Break should also delete the instance data_, because we can't possibly know from here for obvious reasons
++ operator=
++ copyConstructor
+- data_: void*
+- rc: int**
+- ResLink: IntrusiveLink // N.B. should be something like MyResource::IntrusiveLink inherits from global::IntrusiveLink
+
+{HERE}
+== The above is crap and I have clearly misunderstood IntrusiveLists ==
+
+What we need to take from this: 
+There is some global data (History, PC, CurrentLevel, etc). These things have IntrusiveLists of everything else, hence we can serialize them because there are no pointers involved. However, we only serialize non-const data and only non-const data should appear here. Const data is stored in TransientStorage as ref-counted IntrusiveList. Obviously this can be dropped in and out on a whim.
+
+So let's say there is a Goomba resource in level-1. Also, for example's sake let's assume the scripting language is done by now.
+
+The Goomba's location and feelings and velocity are stored in level-1->myIntrusiveListOfGoombas. The Goomba's ai executable code (the script) and its animation data is stored in TransientStorage. It is referenced here as "SP<ExecutableCode> myScript" or "SP<BlockBundle> myAnimation";
+
+This also introduces a new feature in the scripting language: member variables are stored inside the Entity and are very private, the functions are stored in TransientData and only _referenced_ here.
+
+We notice two types of SP's. One is instantiated per call to Resource::Get(...), the other is an instance member created in the constructor. The former is for persistant data, the latter for transient (const) data.
+
+Therefore, let there be one interface Resource as above, and a sub-class adaptor called ConstResource whose Get method returns this->SingleSP, where this SingleSP's RC is directly linked to the Resource's RC.
+
+Have fun trying to figure this out!

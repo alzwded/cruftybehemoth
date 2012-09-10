@@ -77,7 +77,8 @@ public:
     // TODO rename to Get
     Sp ManagedGet(...)
     {
-        return sp_; // no
+        //return sp_; // no
+        return Sp(rid_, rm);
     }
 
 protected:
