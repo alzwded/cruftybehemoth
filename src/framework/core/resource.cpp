@@ -5,10 +5,10 @@
 Core::Resource::Resource(const unsigned long _rid, const std::string& _path, Core::ResourceManager* _rm)
     : path_(_path)
     , rm_(_rm)
-    //, rid_(_rid)
     , rc_(0)
     {}
 
+//========== Resource::Get
 void Core::Resource::DecrRefCnt()
 {
     if(rc_-- == 0) {
@@ -16,15 +16,26 @@ void Core::Resource::DecrRefCnt()
     }
 }
 
-//========== Resource::Sp::Get
-void* Core::Resource::Sp::Get()
+//========== Resource::DecrRefCnt
+void Core::Resource::IncrRefCnt()
 {
-    if(!rc_) {
-        data_ = dad_->Get();
-        rc_ = new int(1);
-    } else {
-        return data_;
+    if(rc_ < 0) rc_ = 0;
+    rc_++;
+}
+
+//========== Resource::DecrRefCnt
+void Core::Resource::DecrRefCnt()
+{
+    if(rc_ && --rc_ == 0) {
+        GetResourceManager()->AddToBlackList(this);
     }
+}
+
+//========== Resource::Sp::Copy
+void Core::Resource::Sp::Copy(const Core::Resource::Sp& _other)
+{
+    dad_ = _other.dad_;
+    dad_->IncrRefCnt();
 }
 
 //========== Resource::Sp::Drop
@@ -33,6 +44,5 @@ void Core::Resource::Sp::Drop()
     if(rc_ && *rc_ && (--*rc_ == 0)) {
         delete rc_;
         dad_->DecrRefCnt();
-        data_ = NULL;
     }
 }

@@ -211,3 +211,11 @@ Core::Level* Core::LevelLoader::GetLevel(const int _i)
     lvl->number_ = _i;
     return lvl;
 }
+
+//========== ResourceManager::GetIntroLevel
+sp<Level> Core::ResourceManager::GetIntroLevel()
+{
+    D123_LOG(D123::FATAL, "TODO implement me");
+    sp<Level> a;
+    return a;
+}

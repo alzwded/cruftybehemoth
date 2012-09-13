@@ -3,6 +3,7 @@
 
 #include <core/time.h>
 #include <core/resource.h>
+#include <core/sp.h>
 #include <string>
 #include <map>
 #include <set>
@@ -21,32 +22,10 @@ namespace Core {
 
 //__________ uses
 class Level;
+class Level_ref;
 class Entity;
 
 class ResourceManager;
-
-//---------- Core::LevelLoader
-class LevelLoader {
-public:
-    //========== LevelLoader::LevelLoader
-    LevelLoader(ResourceManager* _rm)
-        : rm_(_rm)
-        {}
-    //========== LevelLoader::DropLevel
-    void DropLevel(const int _i);
-    //========== LevelLoader::GetLevel
-    Level* GetLevel(const int _i);
-    //========== LevelLoader::PushLevel
-    void PushLevel(const std::string& _path)
-    {
-        levels_.push_back(std::pair<std::string, unsigned long>(_path, 0));
-    }
-    //========== LevelLoader::ResourceManager
-    ResourceManager* _ResourceManager() { return rm_; }
-private:
-    std::vector<std::pair<std::string, unsigned long> > levels_;
-    ResourceManager* rm_;
-};
 
 //---------- Core::ResourceManager
 class ResourceManager {
@@ -79,8 +58,8 @@ public:
     }
     //========== ResourceManager::Release
     void Release(const unsigned long _resourceID);
-    //========== ResourceManager::LevelLoader
-    LevelLoader& _LevelLoader() { return levels_; }
+    //========== ResourceManager::GetIntroLevel
+    Level_ref GetIntroLevel();
     //========== ResourceManager::Gc
     unsigned long Collect(const unsigned long _time, const bool _force =false);
 private:
@@ -90,7 +69,6 @@ private:
     std::map<std::string, unsigned long> pathIDs_;
     std::string path_;
     std::queue<unsigned long> blackList_;
-    LevelLoader levels_;
 };
 
 } // namespace

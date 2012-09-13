@@ -27,7 +27,7 @@
 using namespace std;
 #endif
 
-
+namespace Core {
 
 //====================================================================
 #define MANAGED(CLASSNAME) \
@@ -45,6 +45,7 @@ static sp_error_t sp_error =0;
 
 template<class T>
 class SP
+    : public SP_Base
 {
     T* p;
     unsigned long* c;
@@ -202,5 +203,7 @@ private:
         }
     }
 };
+
+} // namespace
 
 #endif
