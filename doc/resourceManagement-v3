@@ -1,0 +1,53 @@
+== On Resource Management, 3rd Draft ==
+
+Game:
+m_ResourceManager
+
+ResourceManager:
++Load(string pathToResourcesFile)
+    load up all the Resource instances necessary for that file
++LoadState(string pathToSaveFile)
+    load up all the persistant data (deserialize) TODO
++Unload()
+    exit
+-Collect()
+    garbage collect resources which were dropped and don't have any more
+    references
++Get(Path): Resource*
+    returns the resource instance for that thing
+
+Resource:
++Load(string path) virtual
+    loads the particularities from this file
+-Unload() virtual
+    called by ResourceManager
+-operator--
+    decrease ref count, when reaches 0 call Drop
+    called by SP_base's destructor
+-Drop()
+    call ResourceManager->AddToBlackList(this)
+m_listOfDatas: IntrusiveList<SP_base>
+    the instances spawned by this resource -- used for serialization
+:private constructor, only callable by friendly classes hereunder
+:private destructor, only callable by ResourceManager
+
+inherit from resource:
+    REntity
+    \-RScriptedEntity // TODO along with the scripting language
+    RLevel
+    \-RScriptedLevel // TODO along with the scripting language
+    RScreen
+    RBackground/RForeground
+    RSpriteMap
+
+REntity:
+*Load
+*Unload
++Spawn(X, Y): sp<Entity*> { return sp<Entity*>(this, new XEntity(X, Y)); }
+
+SP_base:
++cstr(Resource*)
++dstr()
+
+inherit from SP_base
+template<T> sp, modified to take the Resource* param into account
