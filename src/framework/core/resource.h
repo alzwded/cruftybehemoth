@@ -2,10 +2,16 @@
 #define CORE_RESOURCE_H
 
 #include <string>
+#include <vector>
+#include <cstdarg>
 
 namespace Core {
 
 class ResourceManager;
+class Resource;
+
+//---------- ResourceManager:: typedefs
+typedef Resource* (*Resource_cstr)(const unsigned long, const std::string&, Core::ResourceManager*);
 
 //---------- Core::Resource
 class Resource {
@@ -13,8 +19,8 @@ public:
     //========== Resource:: typedefs
     class Sp {
     public:
-        Sp(const int _rid, ResourceManager* _god)
-            : rid_(_rid)
+        Sp(Resource* _dad, ResourceManager* _god)
+            : dad_(_dad)
             , god_(_god)
             , rc_(NULL)
             , data_(NULL)
@@ -30,10 +36,10 @@ public:
             return *this;
         }
         ~Sp() { Drop(); }
-    protected:
         void* Get();
-        template<class T>
-        T* GetAs() { return static_cast<T*>(Get()); }
+        template<typename T>
+        T* GetAs() { return reinterpret_cast<T*>(Get()); }
+    private:
         void Drop();
         void Copy(const Sp& _other)
         {
@@ -46,8 +52,9 @@ public:
     private:
         int rid_;
         int* rc_;
-        void* data_;
+        Resource* dad_;
         ResourceManager* god_;
+        void* data_;
 
         friend class Core::ResourceManager;
         friend class Core::Resource;
@@ -55,9 +62,11 @@ public:
 protected:
     //========== Resrouce::Resource
     Resource(const unsigned long _rid, const std::string& _path, ResourceManager* _rm);
-public:
     //========== Resrouce::~Resource
     virtual ~Resource() {}
+    //========== Resrouce::DecrRefCnt
+    void DecrRefCnt();
+public:
     //========== Resrouce::CLSSID
     static const unsigned long CLSSID = 0xD00078;
     //========== Resrouce::Clssid
@@ -69,16 +78,16 @@ public:
     //========== Resrouce::Release
     virtual void Release() =0;
     //========== Resrouce::Get
-    // TODO rename to _Get
+    // TODO rename to _Get, do not use this
     virtual void* Get() =0;
     //========== Resrouce::Loaded
     virtual bool Loaded() =0;
     //========== Resrouce::ManagedGet
-    // TODO rename to Get
-    Sp ManagedGet(...)
+    // TODO rename to Get, use this
+    Sp ManagedGet()
     {
-        //return sp_; // no
-        return Sp(rid_, rm);
+        rc_++;
+        return Sp(this, rm_);
     }
 
 protected:
@@ -95,14 +104,11 @@ private:
     //========== Resrouce:: private fields
     std::string path_;
     ResourceManager* rm_;
-    Sp sp_;
+    int rc_;
 
     //========== Resrouce:: friends
     friend class Core::ResourceManager;
 };
-
-//---------- ResourceManager:: typedefs
-typedef Resource* (*Resource_cstr)(const unsigned long, const std::string&, Core::ResourceManager*);
 
 } // namespace
 

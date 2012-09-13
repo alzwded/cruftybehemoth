@@ -175,7 +175,7 @@ unsigned long Core::ResourceManager::Collect(const unsigned long _time, const bo
         int resourceId = blackList_.front();
         if((i = resources_.find(resourceId)) != resources_.end()) {
             assert(i->second);
-            if(i->second->Loaded() && !(i->second->sp_.rc_))
+            if(i->second->Loaded() && !(i->second->rc_))
             {
                 D123_LOG(D123::INFO, "Releasing resource %ld with %ld left on the clock", resourceId, left);
                 i->second->Release();

@@ -72,6 +72,11 @@ public:
     unsigned long GetRID(const std::string& _path);
     //========== ResourceManager::Get
     void* Get(const unsigned long _resourceID, const unsigned long _type =0);
+    //========== ResourceManager::AddToBlackList
+    void AddToBlackList(Resource* _r)
+    {
+        //blackList_.push(_r);
+    }
     //========== ResourceManager::Release
     void Release(const unsigned long _resourceID);
     //========== ResourceManager::LevelLoader
