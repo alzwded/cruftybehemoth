@@ -29,6 +29,7 @@ using namespace std;
 
 namespace Core {
 
+
 //====================================================================
 #define MANAGED(CLASSNAME) \
 class CLASSNAME; /* forward declaration */ \
@@ -45,7 +46,6 @@ static sp_error_t sp_error =0;
 
 template<class T>
 class SP
-    : public SP_Base
 {
     T* p;
     unsigned long* c;

@@ -23,14 +23,6 @@ void Core::Resource::IncrRefCnt()
     rc_++;
 }
 
-//========== Resource::DecrRefCnt
-void Core::Resource::DecrRefCnt()
-{
-    if(rc_ && --rc_ == 0) {
-        GetResourceManager()->AddToBlackList(this);
-    }
-}
-
 //========== Resource::Sp::Copy
 void Core::Resource::Sp::Copy(const Core::Resource::Sp& _other)
 {
@@ -41,8 +33,6 @@ void Core::Resource::Sp::Copy(const Core::Resource::Sp& _other)
 //========== Resource::Sp::Drop
 void Core::Resource::Sp::Drop()
 {
-    if(rc_ && *rc_ && (--*rc_ == 0)) {
-        delete rc_;
-        dad_->DecrRefCnt();
-    }
+    dad_->DecrRefCnt();
+    dad_ = NULL;
 }

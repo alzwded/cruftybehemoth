@@ -16,8 +16,8 @@ protected:
     // initialize the display and input adapters (and possibly other stuff)
     virtual void _MainInit(int argc, char* argv[])
     {
-        void* res =
-            _ResourceManager().Get(_ResourceManager().GetRID("data/test.png"));
+        void* res = NULL;
+            //_ResourceManager().Get(_ResourceManager().GetRID("data/test.png"));
         D123_LOG(D123::DEBUG, "res@%p", res);
     }
 };

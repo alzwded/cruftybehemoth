@@ -36,19 +36,19 @@ public:
     virtual void Load();
     //========== Resource_Level::Loaded
     // TODO move this to abstract class
-    virtual bool Loaded() { return lvl_ != NULL; }
+    virtual bool Loaded() { return false;//lvl_ != NULL;
+    }
     //========== Resource_Level::Release
     // TODO move this to the abstract class
     virtual void Release();
     //========== Resource_Level::Get
     // TODO move this to abstract class
-    virtual void* Get() { return lvl_; }
+    Core::SP<Level> Get() { return lvl_; }
     //========== Resource_Level::New
     static Resource* New(const unsigned long, const std::string& _path, Core::ResourceManager* _rm);
 private:
     //========== Resource_Level:: private fields
-    // TODO move this to abstract class as void* data_;
-    Level* lvl_;
+    Core::SP<Level> lvl_;
 
     //========== Resource_Level:: static initializer
     struct Initializer {

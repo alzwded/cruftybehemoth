@@ -30,7 +30,7 @@ public:
         {
             if(!dad_->Loaded()) {
                 //dad_->rc_->LoadResource(dad_->rc_); // TODO
-                dad_->rc_->Get(dad_->rc_->GetRID(dad_));
+                dad_->Load();
             }
             return dad_;
         }
@@ -42,8 +42,6 @@ public:
             return *this;
         }
         ~Sp() { Drop(); }
-        /*template<typename T>
-        T* GetAs() { return reinterpret_cast<T*>(Access()); }*/
     private:
         void Drop();
         void Copy(const Sp& _other);
@@ -57,10 +55,10 @@ public:
     //---------- Resource::Sp_of
     template<typename T>
     class SP_of
-        : public Resource::SP
+        : public Resource::Sp
     {
         SP_of(Resource* _r)
-            : SP(_r)
+            : Sp(_r)
             {}
     public:
         SP_of<T> New(Resource* _r)
@@ -68,14 +66,15 @@ public:
             SP_of<T> ret(dynamic_cast<T*>(_r));
             return ret;
         }
-        SP_of<T>& operator=(const Resource::SP& _other)
+        SP_of<T>& operator=(const Resource::Sp& _other)
         {
             Drop();
+            if(!_other || !dynamic_cast<T*>(Access())) return;
             Copy(_other);
         }
-        SP_of(const Resource::SP& _other)
+        SP_of(const Resource::Sp& _other)
         {
-            if(!_other) return;
+            if(!_other || !dynamic_cast<T*>(Access())) return;
             Copy(_other);
         }
         virtual ~SP_of() {}
@@ -127,7 +126,6 @@ private:
 
     //========== Resrouce:: friends
     friend class Core::ResourceManager;
-    friend class Core::SP_Base;
 };
 
 } // namespace

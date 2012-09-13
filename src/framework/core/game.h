@@ -72,7 +72,7 @@ public:
     //========== Game::Sleep
     void Sleep();
     //========== Game::LevelLoader
-    LevelLoader& _LevelLoader() { return _ResourceManager()._LevelLoader(); }
+    //LevelLoader& _LevelLoader() { return _ResourceManager()._LevelLoader(); }
 
     //========== Game:: private fields
     ResourceManager resources_;

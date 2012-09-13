@@ -1,5 +1,7 @@
 #include <core/resourcemanager.h>
+#include <core/resource.h>
 #include <core/level.h>
+#include <core/sp.h>
 #include <assert.h>
 #include <fstream>
 #include <iostream>
@@ -124,23 +126,23 @@ unsigned long Core::ResourceManager::GetRID(const std::string& _path)
 }
 
 //========== ResourceManager::Get
-void* Core::ResourceManager::Get(const unsigned long _resourceID, const unsigned long _clssid)
+Core::Resource::Sp Core::ResourceManager::Get(const std::string& _path)
 {
-    D123_LOG(D123::TRACE, "resource %ld requested", _resourceID);
-    std::map<unsigned long, Resource*>::iterator i;
-    if((i = resources_.find(_resourceID)) != resources_.end()) {
+    D123_LOG(D123::TRACE, "resource %s requested", _path.c_str());
+    std::map<std::string, Core::Resource*>::iterator i;
+    if((i = nresources_.find(_path)) != nresources_.end()) {
         assert(i->second);
-        if(_clssid && !i->second->IsA(_clssid)) {
+        /*if(_clssid && !i->second->IsA(_clssid)) {
             D123_LOG(D123::ERROR, "requested a %ld resource, but resource %ld IsA %ld (not including base types)", _clssid, _resourceID, i->second->Clssid());
             return NULL;
-        }
-        if(!i->second->Loaded()) {
+        }*/
+        /*if(!i->second->Loaded()) {
             D123_LOG(D123::TRACE, "loading resource %ld", _resourceID);
             i->second->Load();
-        }
-        return i->second->Get();
+        }*/
+        return Resource::Sp(i->second);
     } else {
-        D123_LOG(D123::ERROR, "no resource with RID %ld", _resourceID);
+        D123_LOG(D123::ERROR, "no resource %s", _path.c_str());
         return NULL;
     }
 }
@@ -192,6 +194,7 @@ unsigned long Core::ResourceManager::Collect(const unsigned long _time, const bo
     return left;
 }
 
+/*
 //========== LevelLoader::DropLevel
 void Core::LevelLoader::DropLevel(const int _i)
 {
@@ -211,11 +214,11 @@ Core::Level* Core::LevelLoader::GetLevel(const int _i)
     lvl->number_ = _i;
     return lvl;
 }
-
+*/
 //========== ResourceManager::GetIntroLevel
-sp<Level> Core::ResourceManager::GetIntroLevel()
+Core::Level_ref Core::ResourceManager::GetIntroLevel()
 {
     D123_LOG(D123::FATAL, "TODO implement me");
-    sp<Level> a;
+    SP<Level> a;
     return a;
 }

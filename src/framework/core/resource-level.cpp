@@ -13,7 +13,7 @@ Core::Resource* Core::Resource_Level::New(
         const std::string& _path,
         Core::ResourceManager* _rm)
 {
-    _rm->_LevelLoader().PushLevel(_path);
+    //_rm->_LevelLoader().PushLevel(_path);
     return new Resource_Level(_rid, _path, _rm);
 }
 
@@ -28,7 +28,7 @@ void Core::Resource_Level::Load()
         D123_LOG(D123::ERROR, "cannot load level at path %s", GetPath().c_str());
         return;
     }
-    lvl_ = Core::Level::New();
+    lvl_ = SP<Level>(Core::Level::New());
     while(!feof(f)) {
         char* type;
         fscanf(f, "%*[\n]");
@@ -55,12 +55,13 @@ void Core::Resource_Level::Load()
             char* path;
             assert(3 == fscanf(f, "%f:%f:%a[^\n]", &x, &y, &path));
             unsigned long rid = GetResourceManager()->GetRID(path);
-            EntitySpawner* es =
-                    static_cast<EntitySpawner*>(GetResourceManager()
-                    ->Get(rid, Resource_Entity::CLSSID));
+            void* es = NULL;
+            //EntitySpawner* es =
+                    //static_cast<EntitySpawner*>(GetResourceManager()
+                    //->Get(rid, Resource_Entity::CLSSID));
             if(es) {
-                Core::Entity* entity = es->Spawn(x, y);
-                lvl_->GetEnvironment().AddEntity(entity);
+                //Core::Entity* entity = es->Spawn(x, y);
+                //lvl_->GetEnvironment().AddEntity(entity);
             } else {
                 D123_LOG(D123::ERROR, "NULL entity spawner");
             }
@@ -84,8 +85,8 @@ void Core::Resource_Level::Load()
 //========== Resource_Level::Release
 void Core::Resource_Level::Release()
 {
-    if(lvl_) {
+    /*if(lvl_) {
         delete lvl_;
         lvl_ = NULL;
-    }
+    }*/
 }

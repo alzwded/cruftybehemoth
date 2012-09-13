@@ -37,7 +37,7 @@ void Core::Game::UpdateLevel(Core::Level*& _currentLevel)
     if(_currentLevel->Next() && _currentLevel->End()) {
         int old = _currentLevel->GetNumber();
         _currentLevel = _currentLevel->Next();
-        _LevelLoader().DropLevel(old);
+        //_LevelLoader().DropLevel(old);
     } else if(!_currentLevel->Next() && _currentLevel->End()) {
         /* exit! */
         /*int old = _currentLevel->GetNumber();
@@ -52,7 +52,7 @@ inline void Core::Game::MainLoop()
     Core::EntityList::iterator i, j;
     Core::EntityList entities;
     Core::ScreenList screens;
-    Core::Level* lvl = _LevelLoader().GetLevel(0);
+    Core::Level* lvl = NULL;//_LevelLoader().GetLevel(0);
 
     do {
         Core::Time::gettime(frameBegin_);
@@ -95,7 +95,7 @@ inline void Core::Game::MainLoop()
         lvl->GetEnvironment().PlaySounds();
 
         // test
-        _ResourceManager()._LevelLoader().DropLevel(lvl->GetNumber());
+        //_ResourceManager()._LevelLoader().DropLevel(lvl->GetNumber());
 
         _MainLoop(*lvl);
 

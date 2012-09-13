@@ -3,12 +3,14 @@
 
 #include <geom/point.h>
 #include <core/entity.h>
+#include <core/sp.h>
 #include <core/environment.h>
 #include <cstddef>
 
 namespace Core {
 
-class LevelLoader;
+MANAGED(Level)
+
 class Level;
 
 //---------- Core::__entity
@@ -60,8 +62,6 @@ private:
     Environment env_;
     int number_;
 
-    //========== Level:: friends
-    friend class Core::LevelLoader;
 };
 
 } // namespace

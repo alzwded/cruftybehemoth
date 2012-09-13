@@ -22,7 +22,6 @@ namespace Core {
 
 //__________ uses
 class Level;
-class Level_ref;
 class Entity;
 
 class ResourceManager;
@@ -33,7 +32,7 @@ public:
     //========== ResourceManager::ResourceManager
     ResourceManager()
         : path_(CORE_RESOURCEMANAGER_DEFAULTPATH)
-        , levels_(this)
+        //, levels_(this)
         {}
     //========== ResourceManager::SetPath
     void SetPath(const std::string& _path) { path_ = _path; }
@@ -50,7 +49,7 @@ public:
     //========== ResourceManager::GetRID
     unsigned long GetRID(const std::string& _path);
     //========== ResourceManager::Get
-    void* Get(const unsigned long _resourceID, const unsigned long _type =0);
+    Resource::Sp Get(const std::string& _path);
     //========== ResourceManager::AddToBlackList
     void AddToBlackList(Resource* _r)
     {
@@ -59,13 +58,14 @@ public:
     //========== ResourceManager::Release
     void Release(const unsigned long _resourceID);
     //========== ResourceManager::GetIntroLevel
-    Level_ref GetIntroLevel();
+    Core::SP<Level> GetIntroLevel();
     //========== ResourceManager::Gc
     unsigned long Collect(const unsigned long _time, const bool _force =false);
 private:
     //========== ResourceManager:: private members
     std::set<unsigned long> keys_;
     std::map<unsigned long, Resource*> resources_;
+    std::map<std::string, Resource*> nresources_;
     std::map<std::string, unsigned long> pathIDs_;
     std::string path_;
     std::queue<unsigned long> blackList_;
