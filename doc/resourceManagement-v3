@@ -13,7 +13,7 @@ ResourceManager:
 -Collect()
     garbage collect resources which were dropped and don't have any more
     references
-+Get(Path): Resource*
++Get(Path): Resource::SP
     returns the resource instance for that thing
 
 Resource:
@@ -28,15 +28,26 @@ Resource:
     call ResourceManager->AddToBlackList(this)
 m_listOfDatas: IntrusiveList<SP_base>
     the instances spawned by this resource -- used for serialization
+m_rc: int
+    querried by ResourceManager to decide if it should be killed or not
 :private constructor, only callable by friendly classes hereunder
 :private destructor, only callable by ResourceManager
+
+Resource::SP:
+cstr(Resource* r) { r->m_rc++; }
+dstr() { r->m_rc--; if(r->m_rc == 0) r->Drop(); }
+operator->
+operator*
 
 inherit from resource:
     REntity
     \-RScriptedEntity // TODO along with the scripting language
+        instances contain RSpriteMap's
     RLevel
     \-RScriptedLevel // TODO along with the scripting language
+        instances contain RScreen's
     RScreen
+        contains instances from REntity::Spawn, RBackground, RForeground
     RBackground/RForeground
     RSpriteMap
 
